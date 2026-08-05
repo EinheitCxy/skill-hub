@@ -8,6 +8,5 @@
     "url": "https://github.com/EinheitCxy"
   },
   "repository": "https://github.com/EinheitCxy/skill-hub",
-  "license": "MIT",
   "skills": "./skills/"
 }
