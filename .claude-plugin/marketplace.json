@@ -1,0 +1,20 @@
+{
+  "name": "skill-hub",
+  "owner": {
+    "name": "EinheitCxy",
+    "url": "https://github.com/EinheitCxy"
+  },
+  "description": "Reusable learning, ML project audit, evidence review, and research direction skills.",
+  "plugins": [
+    {
+      "name": "skill-hub",
+      "source": "./",
+      "description": "A focused collection of reusable Codex and Claude Code skills.",
+      "version": "0.1.0",
+      "author": {
+        "name": "EinheitCxy",
+        "url": "https://github.com/EinheitCxy"
+      }
+    }
+  ]
+}
