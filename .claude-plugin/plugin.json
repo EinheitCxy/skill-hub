@@ -1,0 +1,13 @@
+{
+  "name": "skill-hub",
+  "displayName": "Skill Hub",
+  "version": "0.1.0",
+  "description": "Reusable learning, ML project audit, evidence review, and research direction skills.",
+  "author": {
+    "name": "EinheitCxy",
+    "url": "https://github.com/EinheitCxy"
+  },
+  "repository": "https://github.com/EinheitCxy/skill-hub",
+  "license": "MIT",
+  "skills": "./skills/"
+}
