@@ -64,8 +64,8 @@ Approved in conversation and implemented locally on 2026-08-05.
 
   ```bash
   uv run --with pyyaml python /Users/ahs/.codex/skills/.system/skill-creator/scripts/quick_validate.py learning-loop-coach
-  wc -l learning-loop-coach/SKILL.md
-  rg -n "从零学 X|给我学习资料|考我 X|我不懂 X|帮我复习 X|我学会了吗" learning-loop-coach/SKILL.md
+  wc -l skills/learning-loop-coach/SKILL.md
+  rg -n "从零学 X|给我学习资料|考我 X|我不懂 X|帮我复习 X|我学会了吗" skills/learning-loop-coach/SKILL.md
   ```
 
 - 进行人工行为 smoke test：用“从零学习线性回归”检查是否出现阶梯、最多五个资源、7 天顺序、20 小时计划和当前 session；用“考我线性回归”检查是否直接进入一题一问测验而不生成完整计划。
