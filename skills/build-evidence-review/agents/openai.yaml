@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build Evidence Review"
+  short_description: "Build an auditable, source-bounded research review"
+  default_prompt: "Use $build-evidence-review to turn this bounded corpus into an evidence-graded research review."
