@@ -91,3 +91,7 @@ claude plugin validate .
 ## 按需工作流
 
 入口已精简，详细规范按需读取；不默认展开完整课程、综述或方向决策包。`teacher` 支持源码调用链、tensor shapes 与数学操作讲解；`autoresearch` 支持端到端耗时、冷暖缓存与 GPU/主机内存峰值 profiling。打包仅做最小充分的内容与来源检查。
+
+## Paper Review
+
+`paper-review` 基于已提供论文解释问题、方法、证据和局限；完整报告与 HTML 公式渲染按需交付。入口为 `skills/paper-review/SKILL.md`，渲染脚本依赖 Pandoc。

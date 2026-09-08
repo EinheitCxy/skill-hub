@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Review"
+  short_description: "Explain paper methods, experiments, and limitations"
+  default_prompt: "Use $paper-review to help with this task: explain paper methods, experiments, and limitations."
