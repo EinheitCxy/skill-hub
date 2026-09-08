@@ -1,0 +1,4 @@
+interface:
+  display_name: "Commit Helper"
+  short_description: "Split mixed Git changes into reviewable functional commits"
+  default_prompt: "Use $commit-helper to classify my changes and prepare safe, function-focused commits while preserving unrelated work."

@@ -95,3 +95,7 @@ claude plugin validate .
 ## Paper Review
 
 `paper-review` 基于已提供论文解释问题、方法、证据和局限；完整报告与 HTML 公式渲染按需交付。入口为 `skills/paper-review/SKILL.md`，渲染脚本依赖 Pandoc。
+
+## Commit Helper
+
+`commit-helper` 按功能与依赖拆分提交，保护已有暂存和其他工作，逐提交检查实际内容，并按会话授权执行 push。入口为 `skills/commit-helper/SKILL.md`。
