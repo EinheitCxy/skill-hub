@@ -99,3 +99,7 @@ claude plugin validate .
 ## Commit Helper
 
 `commit-helper` 按功能与依赖拆分提交，保护已有暂存和其他工作，逐提交检查实际内容，并按会话授权执行 push。入口为 `skills/commit-helper/SKILL.md`。
+
+## Results Validator
+
+`results-validator` 核对实验比较条件、原始统计、配对和缺失记录，区分代码定义、观测与机制假设，并提出最小区分实验。入口为 `skills/results-validator/SKILL.md`。
