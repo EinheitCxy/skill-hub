@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Figure Creator"
+  short_description: "Build evidence-preserving figures from experiment results"
+  default_prompt: "Use $research-figure-creator to design or build a reproducible figure for these experiment results."

@@ -1,105 +1,92 @@
 # Skill Hub
 
-可复用的 Codex skills 集合。
+八个按需使用的学习、研究与开发工作流 skills。默认只完成当前问题；完整课程、正式综述和决策包仅在明确需要时展开。
 
-## 原生安装到 Codex
+## 选择 skill
 
-在 Codex 中使用内置 `$skill-installer`，按需安装单个 skill：
+| 调用名称 | 用途 | 默认输出 |
+| --- | --- | --- |
+| `teacher` | 学习、练习、测验与源码讲解 | 按请求给学习练习，或源码调用链、形状变化和代码位置 |
+| `autoresearch` | 审计 ML 运行、评估、报错及性能 | 当前模式的结论与证据；profiling 区分端到端耗时和显存/RAM 峰值口径 |
+| `literature-review` | 多篇文献的证据比较与正式综述 | 围绕问题的比较、来源和证据缺口 |
+| `paper-review` | 讲解已提供论文的机制与实验 | 问题、方法、证据和局限 |
+| `choose-research` | 比较研究方向并作取舍 | 一个主方向、关键重叠、首个证伪实验和失败响应 |
+| `commit-helper` | 将混杂改动整理为功能提交 | 归属明确的提交边界、逐提交核对、按授权 push |
+| `results-validator` | 分析已产生的反常实验结果 | 核对条件、重算统计、竞争解释及区分实验 |
+| `research-figure-creator` | 从实验数据制作可重生成的论文图 | 科学问题、统计口径、图文一致性与重生成入口 |
+
+入口均为 `skills/<调用名称>/SKILL.md`。详细计划、模板与专门检查项在各 skill 的 `references/` 中按条件加载，不默认逐项读取或调用其他 skills。
+
+## 按需能力
+
+- `autoresearch`：请求全流程耗时、显存或内存峰值时加载 `references/profiling.md`，覆盖代表输入、冷暖缓存、阶段边界、GPU 同步、统计窗口与峰值口径。诊断 trace 与最终性能测量分开。`profile` 是 skill 工作模式；现有 snapshot 脚本仅在需要项目盘点时用 `--mode orient`，不是 profiler。
+- `teacher`：请求结合源码理解模型时，追踪真实调用链，解释输入输出、tensor shapes 与数学操作并链接代码位置；区分静态推导和运行观测，不强制先做课程规划或测验。
+
+新增三项独立工作流按需使用：结果诊断不自动切换研究方向，作图不替代数据验证，分功能提交不默认加入实验中间数据或缓存。`commit-helper` 按当前会话授权决定是否提交和 push，加载 skill 本身不代表发布授权。
+
+## 安装到 Codex
+
+使用内置安装器，按需安装：
 
 ```text
 $skill-installer install https://github.com/EinheitCxy/skill-hub/tree/main/skills/teacher
 ```
 
-把 URL 最后的目录名替换为 `autoresearch`、`literature-review` 或 `choose-research`，即可安装其他 skill。安装后重启 Codex 以加载新 skill。
+将 `teacher` 替换为表中其他名称。安装后重启 Codex。本地修改不会自动更新远程仓库或已安装副本。
 
-## 原生安装到 Claude Code
+## 安装到 Claude Code
 
-本仓库包含 Claude Code marketplace manifest。进入 Claude Code 后执行：
+在 Claude Code 中执行：
 
 ```text
 /plugin marketplace add EinheitCxy/skill-hub
 /plugin install skill-hub@skill-hub
 ```
 
-也可以在终端用一条非交互命令完成同样的操作：
+终端也可执行：
 
 ```bash
 claude plugin marketplace add EinheitCxy/skill-hub && claude plugin install skill-hub@skill-hub --scope user
 ```
 
-安装后可用 `/reload-plugins` 重新加载；skill 会以 `skill-hub:<skill-name>` 形式命名空间化。
+重新加载插件或重启后，使用 `skill-hub:teacher` 等带命名空间的名称。私有仓库需要相应 GitHub 读取权限。
 
-仓库当前为 private，执行者需要拥有 `EinheitCxy/skill-hub` 的 GitHub 读取权限并配置 GitHub credentials。若公开分发，将仓库改为 public 后，上述命令即可供无仓库权限的用户使用。
+## 名称迁移
 
-## 跨 Agent 兼容安装
+| 原名称 | 当前名称 |
+| --- | --- |
+| `learning-loop-coach` | `teacher` |
+| `audit-ml-project` | `autoresearch` |
+| `build-evidence-review` | `literature-review` |
+| `paper-review` | `paper-review` |
+| `narrow-research-direction` | `choose-research` |
 
-如果希望用统一 CLI 同时安装到多个 agent，也可以使用 [Vercel `skills` CLI](https://github.com/vercel-labs/skills)：
+不提供旧名称别名。已有安装需单独更新并移除不再使用的旧副本；本仓库不自动修改全局安装。其他插件可能也提供 `literature-review`，调用时优先明确 skill 路径或插件命名空间。
 
-```bash
-npx skills add EinheitCxy/skill-hub --skill '*' -a codex -a claude-code -g --copy -y
-```
+## 精简原则
 
-## 当前 skills
+- 保留来源、实验条件、事实与推断区分，以及可证伪性要求。
+- 完整课程、七章论文报告、语料台账和方向决策包按请求展开。
+- HTML 在文档交付需要公式渲染或明确要求时生成，普通讲解不自动导出。
+- 打包按任务检查内容清单和来源状态，采用最小充分验证。
+- 不把文件缩短比例视为实际 token 节省；真实成本需同任务对照运行测量。
 
-这些 skill 按“学习、项目审计、证据综述、研究方向决策”组织，目录名就是可调用的 skill 名称。
-
-### `teacher`
-
-把“随机提问”转化为结构化学习闭环：
-
-- 学习阶梯和 20 小时核心计划
-- 最多五个高价值资源及使用顺序
-- 一题一问的主动回忆测验
-- Feynman 解释反馈循环
-- 单页速查表和复习安排
-- 基于证据的“暂时掌握 / 待补强”状态
-
-Skill 入口：[`skills/teacher/SKILL.md`](skills/teacher/SKILL.md)
-
-### `autoresearch`
-
-审计 ML 项目真实运行方式，输出基于文件、命令、配置、checkpoint、评估器、日志和打包规则的可核验操作手册。
-
-Skill 入口：[`skills/autoresearch/SKILL.md`](skills/autoresearch/SKILL.md)
-
-### `literature-review`
-
-从明确的 Zotero、文件夹、文献表、代码或学术检索语料构建可审计的证据型综述，覆盖证据卡片、引用、条件化比较和渲染验证。
-
-Skill 入口：[`skills/literature-review/SKILL.md`](skills/literature-review/SKILL.md)
-
-### `choose-research`
-
-把分散的研究想法收敛为一个有证据支撑的主 thesis、最多一个 fallback，并配套重叠审计和可证伪的 go/no-go gates。
-
-Skill 入口：[`skills/choose-research/SKILL.md`](skills/choose-research/SKILL.md)
+`paper-review` 的 HTML 渲染脚本依赖 Pandoc，仅在需要公式文档交付时使用。
 
 ## 验证
 
-使用官方 skill validator 检查 frontmatter 和命名约束：
+安装了 Codex 官方 skill validator 时，可对各目录执行：
 
 ```bash
 uv run --with pyyaml python /Users/ahs/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/teacher
 ```
 
-Claude Code marketplace manifest 可在仓库根目录验证：
+脚本回归测试：
 
 ```bash
-claude plugin validate .
+uv run python -m unittest discover -s skills/autoresearch/scripts -p 'test_*.py'
+uv run --with bibtexparser python -m unittest discover -s skills/literature-review/scripts -p 'test_*.py'
+uv run python -m unittest discover -s skills/choose-research/scripts -p 'test_*.py'
 ```
 
-## 按需工作流
-
-入口已精简，详细规范按需读取；不默认展开完整课程、综述或方向决策包。`teacher` 支持源码调用链、tensor shapes 与数学操作讲解；`autoresearch` 支持端到端耗时、冷暖缓存与 GPU/主机内存峰值 profiling。打包仅做最小充分的内容与来源检查。
-
-## Paper Review
-
-`paper-review` 基于已提供论文解释问题、方法、证据和局限；完整报告与 HTML 公式渲染按需交付。入口为 `skills/paper-review/SKILL.md`，渲染脚本依赖 Pandoc。
-
-## Commit Helper
-
-`commit-helper` 按功能与依赖拆分提交，保护已有暂存和其他工作，逐提交检查实际内容，并按会话授权执行 push。入口为 `skills/commit-helper/SKILL.md`。
-
-## Results Validator
-
-`results-validator` 核对实验比较条件、原始统计、配对和缺失记录，区分代码定义、观测与机制假设，并提出最小区分实验。入口为 `skills/results-validator/SKILL.md`。
+Claude Code 可用时，运行 `claude plugin validate .` 检查插件清单。正式报告的内容与渲染仍需按对应 skill 的交付要求验证。
