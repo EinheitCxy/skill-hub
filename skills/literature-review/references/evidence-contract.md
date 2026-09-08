@@ -48,6 +48,6 @@ Prefer, in order:
 3. repository commit plus path;
 4. arXiv identifier plus version;
 5. canonical primary URL;
-6. local content hash.
+6. local file path plus recorded source version or date.
 
 Use titles only as display names, not deduplication identities.

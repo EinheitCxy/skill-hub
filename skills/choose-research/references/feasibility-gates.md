@@ -39,7 +39,9 @@ Use only applicable gates, but keep the order.
 
 Do not silently lower a threshold after observing failure.
 
-## Learned Components
+## Acceleration or Scheduling Research
+
+Apply this section only when the direction uses learned scheduling, dynamic allocation, compression, or inference acceleration. It is not a general prerequisite for other research domains.
 
 Before a learned component:
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Teacher"
+  short_description: "Learn with practice, or trace a model from source code"
+  default_prompt: "Use $teacher to help with this task through focused practice, feedback, or a source-driven model walkthrough."

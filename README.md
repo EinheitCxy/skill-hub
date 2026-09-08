@@ -7,10 +7,10 @@
 在 Codex 中使用内置 `$skill-installer`，按需安装单个 skill：
 
 ```text
-$skill-installer install https://github.com/EinheitCxy/skill-hub/tree/main/skills/learning-loop-coach
+$skill-installer install https://github.com/EinheitCxy/skill-hub/tree/main/skills/teacher
 ```
 
-把 URL 最后的目录名替换为 `audit-ml-project`、`build-evidence-review` 或 `narrow-research-direction`，即可安装其他 skill。安装后重启 Codex 以加载新 skill。
+把 URL 最后的目录名替换为 `autoresearch`、`literature-review` 或 `choose-research`，即可安装其他 skill。安装后重启 Codex 以加载新 skill。
 
 ## 原生安装到 Claude Code
 
@@ -43,7 +43,7 @@ npx skills add EinheitCxy/skill-hub --skill '*' -a codex -a claude-code -g --cop
 
 这些 skill 按“学习、项目审计、证据综述、研究方向决策”组织，目录名就是可调用的 skill 名称。
 
-### `learning-loop-coach`
+### `teacher`
 
 把“随机提问”转化为结构化学习闭环：
 
@@ -54,32 +54,32 @@ npx skills add EinheitCxy/skill-hub --skill '*' -a codex -a claude-code -g --cop
 - 单页速查表和复习安排
 - 基于证据的“暂时掌握 / 待补强”状态
 
-Skill 入口：[`skills/learning-loop-coach/SKILL.md`](skills/learning-loop-coach/SKILL.md)
+Skill 入口：[`skills/teacher/SKILL.md`](skills/teacher/SKILL.md)
 
-### `audit-ml-project`
+### `autoresearch`
 
 审计 ML 项目真实运行方式，输出基于文件、命令、配置、checkpoint、评估器、日志和打包规则的可核验操作手册。
 
-Skill 入口：[`skills/audit-ml-project/SKILL.md`](skills/audit-ml-project/SKILL.md)
+Skill 入口：[`skills/autoresearch/SKILL.md`](skills/autoresearch/SKILL.md)
 
-### `build-evidence-review`
+### `literature-review`
 
 从明确的 Zotero、文件夹、文献表、代码或学术检索语料构建可审计的证据型综述，覆盖证据卡片、引用、条件化比较和渲染验证。
 
-Skill 入口：[`skills/build-evidence-review/SKILL.md`](skills/build-evidence-review/SKILL.md)
+Skill 入口：[`skills/literature-review/SKILL.md`](skills/literature-review/SKILL.md)
 
-### `narrow-research-direction`
+### `choose-research`
 
 把分散的研究想法收敛为一个有证据支撑的主 thesis、最多一个 fallback，并配套重叠审计和可证伪的 go/no-go gates。
 
-Skill 入口：[`skills/narrow-research-direction/SKILL.md`](skills/narrow-research-direction/SKILL.md)
+Skill 入口：[`skills/choose-research/SKILL.md`](skills/choose-research/SKILL.md)
 
 ## 验证
 
 使用官方 skill validator 检查 frontmatter 和命名约束：
 
 ```bash
-uv run --with pyyaml python /Users/ahs/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/learning-loop-coach
+uv run --with pyyaml python /Users/ahs/.codex/skills/.system/skill-creator/scripts/quick_validate.py skills/teacher
 ```
 
 Claude Code marketplace manifest 可在仓库根目录验证：
@@ -87,3 +87,7 @@ Claude Code marketplace manifest 可在仓库根目录验证：
 ```bash
 claude plugin validate .
 ```
+
+## 按需工作流
+
+入口已精简，详细规范按需读取；不默认展开完整课程、综述或方向决策包。`teacher` 支持源码调用链、tensor shapes 与数学操作讲解；`autoresearch` 支持端到端耗时、冷暖缓存与 GPU/主机内存峰值 profiling。打包仅做最小充分的内容与来源检查。

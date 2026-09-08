@@ -1,4 +1,0 @@
-interface:
-  display_name: "Learning Loop Coach"
-  short_description: "Build a structured path, test recall, and close learning gaps"
-  default_prompt: "Use $learning-loop-coach to help me learn a topic through a structured path, active recall, and feedback."

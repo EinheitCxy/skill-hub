@@ -1,0 +1,4 @@
+interface:
+  display_name: "Literature Review"
+  short_description: "Compare research sources with traceable evidence"
+  default_prompt: "Use $literature-review to help with this task: compare research sources with traceable evidence."

@@ -67,11 +67,15 @@ State when guidance is based on code inspection but the checkpoint was not actua
 
 Do not change multiple tuning variables at once.
 
+## `profile`
+
+Read [profiling.md](profiling.md). Define representative inputs and the measurement window, separate cold and warm execution, synchronize asynchronous work correctly, and distinguish end-to-end timing from diagnostic stages and memory peak scopes. Report only measured results and supported source-level attribution.
+
 ## `package`
 
 1. Identify whether the deliverable is committed source, dirty working state, generated output, or model artifact.
 2. Prefer a clean repository snapshot when that matches the request.
 3. Exclude environments, caches, secrets, temporary files, and runtime workspaces.
 4. Build in a temporary location.
-5. Inspect the archive listing and hash the final artifact.
+5. Inspect the archive listing against the requested contents.
 6. Record source branch/commit or explicit dirty-state provenance.

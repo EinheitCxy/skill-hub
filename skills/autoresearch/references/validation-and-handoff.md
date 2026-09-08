@@ -33,7 +33,6 @@ Report each layer separately.
 - prefer recoverable, non-destructive operations;
 - avoid secrets and environment directories;
 - inspect file list and size;
-- compute a hash;
 - record how to reproduce the archive.
 
 ## Final Checklist

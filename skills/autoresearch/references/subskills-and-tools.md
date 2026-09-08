@@ -9,7 +9,7 @@
 | PyTorch Lightning project | `pytorch-lightning` |
 | Stable Baselines project | `stable-baselines3` |
 | scikit-learn project | `scikit-learn` |
-| Performance diagnosis | appropriate profiler plus actual logs |
+| End-to-end timing and GPU/host memory peaks | [profiling workflow](profiling.md), then only the profiler needed for the active framework |
 
 ## Selection Rules
 

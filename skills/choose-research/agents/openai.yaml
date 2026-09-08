@@ -1,0 +1,4 @@
+interface:
+  display_name: "Choose Research"
+  short_description: "Choose a research thesis and its first falsification gate"
+  default_prompt: "Use $choose-research to help with this task: choose a research thesis and its first falsification gate."

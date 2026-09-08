@@ -1,4 +1,0 @@
-interface:
-  display_name: "Narrow Research Direction"
-  short_description: "Audit novelty and choose one defensible thesis"
-  default_prompt: "Use $narrow-research-direction to audit these ideas and select one defensible research thesis."

@@ -1,10 +1,10 @@
 # Subskills and Tools
 
-Use the smallest available set and read each selected skill fully before acting.
+Use the smallest available set and read each selected skill fully before acting. Select a capability only when the current step lacks it; this table is not a checklist or fixed sequence.
 
 | Need | Preferred capability |
 | --- | --- |
-| Search design and synthesis | `literature-review` |
+| Search design and synthesis | Use this skill’s corpus workflow; do not reload a same-named skill |
 | arXiv full-text explanation | `read-arxiv-paper` |
 | Scholarly metadata discovery | `arxiv-database`, `openalex-database` |
 | Citation and bibliography handling | `citation-management` |

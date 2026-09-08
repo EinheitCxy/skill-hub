@@ -1,4 +1,0 @@
-interface:
-  display_name: "Audit ML Project"
-  short_description: "Map and verify how an ML project actually runs"
-  default_prompt: "Use $audit-ml-project to inspect this ML project and produce a verified operational runbook."

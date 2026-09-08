@@ -1,3 +1,5 @@
+> 历史设计记录：`learning-loop-coach` 已更名为 `teacher`，下方旧命令仅作历史记录。当前用法与验证命令见 [README](../../../README.md)。
+
 # Learning Loop Coach Design
 
 ## Status
