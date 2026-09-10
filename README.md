@@ -1,6 +1,6 @@
 # Skill Hub
 
-八个按需使用的学习、研究与开发工作流 skills。默认只完成当前问题；完整课程、正式综述和决策包仅在明确需要时展开。
+九个按需使用的学习、研究、开发与写作工作流 skills。默认只完成当前问题；完整课程、正式综述和决策包仅在明确需要时展开。
 
 ## 选择 skill
 
@@ -13,6 +13,7 @@
 | `choose-research` | 比较研究方向并作取舍 | 一个主方向、关键重叠、首个证伪实验和失败响应 |
 | `commit-helper` | 将混杂改动整理为功能提交 | 归属明确的提交边界、逐提交核对、按授权 push |
 | `results-validator` | 分析已产生的反常实验结果 | 核对条件、重算统计、竞争解释及区分实验 |
+| `humanizer` | 保留原意与作者语气，去除 AI 写作痕迹 | 粘贴文本给初稿、简短检查与终稿；文件仅写最终正文 |
 | `research-figure-creator` | 从实验数据制作可重生成的论文图 | 科学问题、统计口径、图文一致性与重生成入口 |
 
 入口均为 `skills/<调用名称>/SKILL.md`。详细计划、模板与专门检查项在各 skill 的 `references/` 中按条件加载，不默认逐项读取或调用其他 skills。
@@ -50,6 +51,12 @@ claude plugin marketplace add EinheitCxy/skill-hub && claude plugin install skil
 ```
 
 重新加载插件或重启后，使用 `skill-hub:teacher` 等带命名空间的名称。私有仓库需要相应 GitHub 读取权限。
+
+## Humanizer
+
+调用 `humanizer`（Claude Code 中为 `skill-hub:humanizer`），提供待改写文本或文件路径；可附写作样本以匹配个人语气。例如：`用 humanizer 润色这段文字，保留全部事实和引用：……`。
+
+基于 [blader/humanizer](https://github.com/blader/humanizer) 的 3.0.0 版本，固定上游提交 `9862685f575c65a8247f90369951df1b3416e3d6`。完整保留 25 类模式、示例、例外及来源说明；仅合并识别、改写、核验流程。技能目录仅含 `SKILL.md` 和上游 MIT `LICENSE`，独立项目的 README、发布配置、CI、校验脚本及可选 UI 元数据不随包导入。安装沿用本仓库统一入口，将上述 Codex 安装路径末尾替换为 `humanizer` 即可。
 
 ## 名称迁移
 
