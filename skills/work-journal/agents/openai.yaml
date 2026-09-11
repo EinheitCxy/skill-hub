@@ -1,0 +1,4 @@
+interface:
+  display_name: "Work Journal"
+  short_description: "Track experiments, evidence, decisions, and next steps"
+  default_prompt: "Use $work-journal to keep a concise live status and durable journal of this task's experiments, results, decision rationale, and next steps."

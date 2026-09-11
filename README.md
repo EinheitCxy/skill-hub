@@ -1,6 +1,6 @@
 # Skill Hub
 
-九个按需使用的学习、研究、开发与写作工作流 skills。默认只完成当前问题；完整课程、正式综述和决策包仅在明确需要时展开。
+十个按需使用的学习、研究、开发与写作工作流 skills。默认只完成当前问题；完整课程、正式综述和决策包仅在明确需要时展开。
 
 ## 选择 skill
 
@@ -15,6 +15,7 @@
 | `results-validator` | 分析已产生的反常实验结果 | 核对条件、重算统计、竞争解释及区分实验 |
 | `humanizer` | 保留原意与作者语气，去除 AI 写作痕迹 | 粘贴文本给初稿、简短检查与终稿；文件仅写最终正文 |
 | `research-figure-creator` | 从实验数据制作可重生成的论文图 | 科学问题、统计口径、图文一致性与重生成入口 |
+| `work-journal` | 长任务的持续进度、实验记录与交接 | 一页当前状态、追加式事件日志、证据与决策依据、下一步 |
 
 入口均为 `skills/<调用名称>/SKILL.md`。详细计划、模板与专门检查项在各 skill 的 `references/` 中按条件加载，不默认逐项读取或调用其他 skills。
 
@@ -51,6 +52,16 @@ claude plugin marketplace add EinheitCxy/skill-hub && claude plugin install skil
 ```
 
 重新加载插件或重启后，使用 `skill-hub:teacher` 等带命名空间的名称。私有仓库需要相应 GitHub 读取权限。
+
+## Work Journal
+
+长任务开始时使用：`用 work-journal 持续记录这项任务：每次实验、结果、决策依据和下一步都留下记录，并在关键变化时向我简报。`
+
+尚未安装时，可让 agent 读取本地 `skills/work-journal/SKILL.md` 并按其执行。安装方式沿用上文，将名称替换为 `work-journal`；远程安装需先将新增目录发布到仓库。Claude Code 插件安装后使用 `skill-hub:work-journal`。
+
+默认在任务项目的 `docs/work-journal/<task-id>/` 保存 `STATUS.md` 和 `JOURNAL.md`；已有日志则复用。前者回答当前进展，后者保留实验、失败、证据、决策更正和接续入口。“中间思考”记录为简短的假设、证据与取舍摘要。运行完成和假设得到支持分别标记，不混为一谈。
+
+可随时问：`现在做过哪些实验？哪些结论有证据，下一步验证什么？` 技能不包含后台定时器或宿主 hooks；更新依赖 agent 在当前任务中执行，未进行实际长任务效果评测。
 
 ## Humanizer
 
