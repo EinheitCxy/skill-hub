@@ -13,7 +13,7 @@
 | `choose-research` | 比较研究方向并作取舍 | 一个主方向、关键重叠、首个证伪实验和失败响应 |
 | `commit-helper` | 将混杂改动整理为功能提交 | 归属明确的提交边界、逐提交核对、按授权 push |
 | `results-validator` | 分析已产生的反常实验结果 | 核对条件、重算统计、竞争解释及区分实验 |
-| `humanizer` | 保留原意与作者语气，去除 AI 写作痕迹 | 粘贴文本给初稿、简短检查与终稿；文件仅写最终正文 |
+| `humanizer` | 保留原意与作者语气，去除 AI 写作痕迹；中英文各走一套规则 | 粘贴文本给初稿、简短检查与终稿；文件仅写最终正文 |
 | `research-figure-creator` | 从实验数据制作可重生成的论文图 | 科学问题、统计口径、图文一致性与重生成入口 |
 | `work-journal` | 长任务的持续进度、实验记录与交接 | 一页当前状态、追加式事件日志、证据与决策依据、下一步 |
 
@@ -67,7 +67,9 @@ claude plugin marketplace add EinheitCxy/skill-hub && claude plugin install skil
 
 调用 `humanizer`（Claude Code 中为 `skill-hub:humanizer`），提供待改写文本或文件路径；可附写作样本以匹配个人语气。例如：`用 humanizer 润色这段文字，保留全部事实和引用：……`。
 
-基于 [blader/humanizer](https://github.com/blader/humanizer) 的 3.0.0 版本，固定上游提交 `9862685f575c65a8247f90369951df1b3416e3d6`。完整保留 25 类模式、示例、例外及来源说明；仅合并识别、改写、核验流程。技能目录仅含 `SKILL.md` 和上游 MIT `LICENSE`，独立项目的 README、发布配置、CI、校验脚本及可选 UI 元数据不随包导入。安装沿用本仓库统一入口，将上述 Codex 安装路径末尾替换为 `humanizer` 即可。
+技能按语种分流。英文走 `SKILL.md` 的 25 类模式，基于 [blader/humanizer](https://github.com/blader/humanizer) 的 3.0.0 版本，固定上游提交 `9862685f575c65a8247f90369951df1b3416e3d6`。完整保留 25 类模式、示例、例外及来源说明；仅合并识别、改写、核验流程。技能目录含 `SKILL.md`、上游 MIT `LICENSE` 与 `references/`，独立项目的 README、发布配置、CI、校验脚本及可选 UI 元数据不随包导入。安装沿用本仓库统一入口，将上述 Codex 安装路径末尾替换为 `humanizer` 即可。
+
+中文走 `references/chinese-rules.md`，11 条规则改编自 Moxt Hub 的[「去AI味 / Lieflat Less AI Tone」](https://moxt.ai/hub?type=skill&id=lieflat-less-ai-tone)，其依据是 5 个模型输出与 329 篇人类文章、283 万字的对比实测。两套规则的契约不同，不能混用：英文侧允许为表达合并、拆分、重排段落，中文侧是白名单式改写，只动命中触发标记的句子，段落顺序、句长、段长和文章结构一律不改。中文侧还显式排除了一批"看着像 AI 味但实测站不住"的特征——三联排比、被动句、名词化、长句、问句、比喻，人类中文作者用得不比模型少，按英文模式去改反而更不像人写。
 
 ## 名称迁移
 
