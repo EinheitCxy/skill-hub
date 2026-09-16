@@ -1,8 +1,8 @@
 {
   "name": "skill-hub",
   "displayName": "Skill Hub",
-  "version": "0.1.0",
-  "description": "Focused learning, ML profiling, evidence review, experiment diagnosis, figures, research decisions, and functional Git commits.",
+  "version": "0.2.0",
+  "description": "Focused learning, ML profiling, evidence review, experiment diagnosis, figures, research decisions, functional Git commits, and AI-tone cleanup for English and Chinese prose.",
   "author": {
     "name": "EinheitCxy",
     "url": "https://github.com/EinheitCxy"
