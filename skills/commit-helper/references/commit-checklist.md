@@ -1,11 +1,11 @@
-# 单个提交核查
+# Commit Checklist
 
-提交前检查：
+Before each commit, verify:
 
-1. 暂存 diff 只包含一个功能意图，且 paths 与 hunks 清单一致。
-2. 该功能的依赖已在更早提交中出现，或与本提交一同完整提供。
-3. 测试、文档和可发布产物与该功能一致；缓存、日志和中间数据未误入。
-4. 其余已暂存、未暂存和未跟踪工作仍保留且归属清楚。
-5. 提交信息说明行为变化或目的，不写泛化的“update”。
+1. The staged diff expresses one purpose and matches the planned paths/hunks.
+2. Dependencies are complete in this commit or earlier commits.
+3. Tests, docs, and publishable outputs match the change; caches, logs, and intermediate data are excluded unless required.
+4. Other staged, unstaged, and untracked work is preserved with clear ownership.
+5. The message explains the behavior or purpose, rather than a generic "update".
 
-推送前另核对目标 remote、分支和待发布提交；仅在用户已有授权范围内执行，绝不强推或改写历史，除非用户明确授权。
+Before pushing, verify the remote, branch, and outgoing commits. Stay within authorization; force pushes and history rewriting require explicit approval.

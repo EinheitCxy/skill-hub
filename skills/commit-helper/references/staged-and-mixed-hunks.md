@@ -1,10 +1,9 @@
-# 已暂存内容与混合 hunk
+# Staged and Mixed Hunks
 
-先记录初始状态：分支、HEAD、worktree、已暂存 diff、未暂存 diff 与未跟踪文件。不要通过 reset、stash 或整仓暂存来“重新开始”。
+Record the branch, HEAD, worktree, staged and unstaged diffs, and untracked files. Do not reset, stash, or stage everything to start over.
 
-若一个文件同时含有已暂存和未暂存 hunk，分别判断每个 hunk 的功能归属。已暂存部分只有在确认属于当前提交时才纳入该提交；其余部分保留原状，不明确时询问用户。需要拆分同一 hunk 时，先说明无法从现有边界可靠区分的原因，要求用户指定归属或确认允许人工拆分。
+Assign staged and unstaged hunks separately. Include existing staged work only when it belongs to this commit; preserve the rest. If ownership or a split within one hunk is unclear, explain the ambiguity and ask for attribution or approval to split it manually.
 
-每完成一个提交组，再检查剩余已暂存内容是否仍是用户原有状态，未暂存和未跟踪内容是否仍存在。不要把“当前提交之外的改动”误当作应清理的噪声。
+A normal commit includes the entire index: precise `git add` does not exclude previously staged changes. When the index mixes features, use a separate index, or adjust and restore staging within existing authorization. Verify preservation before proceeding; otherwise provide a reviewable plan.
 
-
-普通提交会包含整个当前 index，精确 `git add` 不会自动排除原有暂存内容。若当前 index 含其他功能，不能直接提交；选择独立 index 隔离本组，或在已有授权下调整暂存并恢复其余原有暂存内容。先验证所选方式能保留用户工作，再执行；无法保证时停在可审查计划。每次提交后检查实际提交 diff，并核对剩余内容及其暂存状态，不仅检查文件是否存在。
+After each commit, inspect its actual diff and verify remaining staged, unstaged, and untracked work, including staging state.
