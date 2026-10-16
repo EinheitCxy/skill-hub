@@ -10,7 +10,7 @@
       "name": "skill-hub",
       "source": "./",
       "description": "A focused collection of reusable Codex and Claude Code skills.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "author": {
         "name": "EinheitCxy",
         "url": "https://github.com/EinheitCxy"
