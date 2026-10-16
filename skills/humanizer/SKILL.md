@@ -1,6 +1,6 @@
 ---
 name: humanizer
-description: Rewrite AI-sounding prose while preserving meaning and the writer's voice. Use when asked to humanize text, remove AI writing patterns, or review prose for artificial phrasing. Chinese text follows a separate, stricter whitelist ruleset (去AI味).
+description: Rewrite AI-sounding prose while preserving meaning and the writer's voice. Use when asked to humanize text, remove AI writing patterns, or review prose for artificial phrasing. Chinese text follows a separate, stricter whitelist ruleset.
 license: MIT
 metadata:
   version: "3.1.0"
@@ -362,4 +362,4 @@ The patterns come from Wikipedia's ["Signs of AI writing"](https://en.wikipedia.
 
 Adapted from [blader/humanizer](https://github.com/blader/humanizer), commit `9862685f575c65a8247f90369951df1b3416e3d6` (skill version 3.0.0), under the [MIT license](LICENSE). The 25 patterns, examples, exceptions, and source section are unchanged. This distribution condenses the introductory workflow and uses Skill Hub's installation and packaging.
 
-The Chinese ruleset in `references/chinese-rules.md` comes from a different upstream: the [「去AI味 / Lieflat Less AI Tone」skill on Moxt Hub](https://moxt.ai/hub?type=skill&id=lieflat-less-ai-tone), whose 11 rules were measured across 2.83 million characters comparing five models against 329 human articles, and which in turn credits [KKKKhazix/human-writing](https://github.com/KKKKhazix/human-writing). Its rule text is reproduced there; its RESEARCH.md is not.
+The Chinese ruleset in `references/chinese-rules.md` comes from a different upstream: the [Lieflat Less AI Tone skill on Moxt Hub](https://moxt.ai/hub?type=skill&id=lieflat-less-ai-tone), whose 11 rules were measured across 2.83 million characters comparing five models against 329 human articles, and which in turn credits [KKKKhazix/human-writing](https://github.com/KKKKhazix/human-writing). Its rule text is reproduced there; its RESEARCH.md is not.

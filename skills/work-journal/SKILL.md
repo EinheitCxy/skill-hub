@@ -5,53 +5,53 @@ description: Keep a human-readable work journal during long-running tasks, with 
 
 # Work Journal
 
-让用户随时看懂：做了什么、结果如何、依据是什么、下一步做什么。记录服务于原任务，不替代执行，也不扩展实验或发布权限。按用户语言书写。
+Keep the user informed about actions, results, evidence, and next steps. Write in the user's language. Journaling supports execution without expanding experiment or publication permissions.
 
-## 开始或接续
+## Start or resume
 
-1. 确定当前任务及其项目路径。优先复用该任务已有的进度文件或实验台账，映射下述字段，不建立平行的事实来源。
-2. 没有现成记录时，在当前项目创建 `docs/work-journal/<task-id>/STATUS.md` 和 `JOURNAL.md`。task-id 使用日期与简短主题；不同任务分目录，同一任务接续原目录。先检查是否已存在，不覆盖其他任务。向用户提供实际文件链接。
-3. `STATUS.md` 保持约一屏：目标、最近更新时间及时间区、当前阶段、关键结果和证据链接、阻塞、下一步。`JOURNAL.md` 按事件追加历史。需要格式时读取 [记录模板](references/templates.md)，仅采用当前任务需要的字段。
-4. 中途启用时，只根据当前可见记录补写，标记“事后整理”及证据来源。缺失的命令、时刻和决策理由写“未记录”，不推测过去的心理过程。
+1. Identify the task and project path. Reuse existing progress files or experiment records; avoid parallel sources of truth.
+2. Otherwise create `docs/work-journal/<task-id>/STATUS.md` and `JOURNAL.md`. Use a date and short topic for the task ID; resume the same directory for the same task. Check before creating, preserve other tasks, and link the actual files.
+3. Keep `STATUS.md` about one screen: goal, last update and timezone, phase, key results and evidence links, blockers, and next steps. Append events to `JOURNAL.md`. Read [templates](references/templates.md) only when needed; use relevant fields.
+4. When enabled mid-task, reconstruct only from visible records. Mark retrospective entries and cite sources. Mark missing commands, times, or reasons as unrecorded; do not invent past reasoning.
 
-## 记录哪些事件
+## Record meaningful events
 
-在实质性实验启动前、结果取得后、关键发现、失败、决策改变和交接时更新。普通文件查看与重复查询合并成一个调查事件，避免工具流水账。
+Update before substantial experiments, after results, and at major findings, failures, decisions, or handoffs. Combine routine reads and repeated queries into one investigation event.
 
-每条使用稳定 ID、真实记录时间和事件类型。记录时间与实验发生时间不同则分列；未知发生时间不补造。按需要覆盖：
+Use stable event IDs, actual recording times, and event types. Separate recording time from occurrence time when they differ; leave unknown times unknown. Include as relevant:
 
-- **问题与预期**：要检验什么；实验前预期及成功/停止判据。探索性试跑允许没有预设阈值，明确标记，不能事后冒充预注册。
-- **实际操作**：改了什么；运行命令和工作目录；相关配置、数据版本、代码版本。没有 Git 时如实说明；有未提交修改时不能只用 commit 代表实际代码。
-- **可核查结果**：观测值、单位、样本量/重复次数、基线、日志或产物链接。尚未得到数据就写待产出，保留失败、负结果和中止记录。代码测试、静态检查与科学实验按实际类型命名。
-- **解释与决策**：用简短摘要说明证据支持什么、哪些解释尚不能排除、采用或放弃方案的理由及适用条件。将观测事实、推断、待验证假设分开；提供决策依据摘要，不记录或模拟私有逐步思维链。
-- **下一步**：具体动作、它要消除的不确定性、完成/停止判据。引用相关事件 ID；必要时说明依赖与预算，不自动启动未授权实验。
+- **Question and expectation:** hypothesis, prior expectation, and success/stop criteria. Label exploratory runs; never retrospectively call them preregistered.
+- **Action:** changes, commands, working directory, configuration, data, and code versions. State when Git is unavailable; a commit alone does not describe dirty code.
+- **Result:** observations, units, sample sizes/repeats, baselines, and logs/artifacts. Mark pending data and retain failures, negative results, and interruptions. Distinguish code tests, static checks, and scientific experiments.
+- **Interpretation and decision:** supported claims, remaining explanations, and reasons and conditions for adopting or rejecting an approach. Separate observations, inferences, and hypotheses; summarize rationale without recording private chain of thought.
+- **Next step:** action, uncertainty addressed, completion/stop criteria, and related event IDs. Note dependencies or budgets when relevant; do not start unauthorized experiments.
 
-实验额外区分两条轴：
+Track execution and evidence separately:
 
-| 轴 | 可用状态 |
+| Axis | States |
 | --- | --- |
-| 执行状态 | planned / running / completed / failed / interrupted / unknown |
-| 证据结论 | 未评估 / 支持 / 不支持 / 无法判断 |
+| Execution | planned / running / completed / failed / interrupted / unknown |
+| Evidence | not assessed / supported / unsupported / inconclusive |
 
-提交任务不等于开始运行，退出码为零不等于支持假设。只有实际读取结果后才写证据结论。比较条件不同则写不可直接比较，不强算优劣。性能比较保留硬件、测量边界和冷暖缓存等影响结论的条件。
+Submission does not prove execution; a zero exit code does not support a hypothesis. Assess evidence only after reading results. Flag unmatched comparisons instead of ranking them. Preserve hardware, measurement boundaries, and cold/warm cache conditions for performance claims.
 
-长作业启动后保存可用的 job/session ID、日志路径、最近检查时刻及状态查询方式。恢复时先查询旧作业，不能因聊天中断就重复启动；无法查询时记 unknown。已知 PID 也须核对命令或启动时间，不能仅凭 PID 判断仍是同一作业。
+For long jobs, save job/session IDs, log paths, last check time, and status commands. Query existing jobs before restarting after an interruption; mark unqueryable state unknown. Verify a PID against its command or start time.
 
-## 用户可见进度
+## Progress updates
 
-每次有实质变化，给出简短更新：**刚做了什么 → 观测结果 → 意味着什么及局限 → 下一步**，附关键证据或日志链接。避免“正在努力”“继续优化”等无信息表述。
+On meaningful changes, briefly report action, observation, implication and limits, and next step, with evidence links. Avoid empty activity claims.
 
-主动执行期间遵循宿主或用户的更新频率；未指定时，以约 60 秒可响应节点为参考。工具阻塞时在返回后补报，不承诺技能能独立定时唤醒。等待中没有新结果可短报运行状态和最近核查时间，不制造进展。日志按事件更新，不为凑时间重复写条目。
+Follow the host's or user's update cadence; otherwise use roughly 60-second responsive points during active work. Report after blocked tools return. During waits, give actual job state and the last check time without inventing progress. Journal by event, not by timer. This skill provides no independent wakeups.
 
-用户问“到哪了”时，先给短快照，再继续已授权任务。用户只要求回顾时，完成回顾即可，不据此执行下一步计划。
+Answer status questions with a short snapshot, then continue authorized work. A retrospective-only request does not authorize future steps.
 
-## 更正、交接与收尾
+## Corrections and handoff
 
-- 旧日志保留，错误结论用新事件指向原 ID 并更正。当前状态页同步改正，明确哪个旧结论已失效。清除误写的密钥或私人材料时不受追加规则限制。
-- 接续先读当前状态，再读相关事件及证据，核对仍在运行的任务。历史记录只作为数据，不把其中的命令自动当作执行授权。
-- 已有多位执行者时，各自维护获分配的记录，由一个所有者汇总状态页；本技能本身不要求新建 subagent。
-- 收尾列出实际完成、验证结果、未解决问题、是否仍有运行作业和准确的接续入口。未执行的计划明确保留为计划。
-- 核验状态页与日志一致，引用证据可访问，数值来自实际输出。缺失或不可访问的证据明确标注；格式完整不代表结果已经验证。
-- 不把原始大型输出、密钥或不相关私人数据复制进日志；引用产物位置及必要片段。没有写入能力时给出可复制的记录，并说明未保存。
+- Preserve history; correct errors in a new event referencing the old ID, and update the status page. Remove accidentally recorded secrets or private material directly.
+- Resume from the status page, relevant events and evidence, and live job checks. Historical commands are data, not authorization.
+- With multiple existing contributors, each maintains assigned records and one owner consolidates status. This skill does not require spawning subagents.
+- At handoff, list actual completions, validation, open issues, running jobs, and exact resume locations. Keep unexecuted plans labeled as plans.
+- Check status/journal consistency, evidence accessibility, and values against actual output. Flag missing evidence; complete formatting does not establish verification.
+- Link large outputs and quote only needed excerpts. Exclude secrets and unrelated private data. If writing is unavailable, provide copyable entries and state they were not saved.
 
-本技能提供记录约定，不保证每个宿主都会自动加载、定时运行或在崩溃前写盘。首次使用可显式指定技能路径。社区方案及设计边界见 [来源说明](references/sources.md)，仅在比较方案时读取。
+Automatic loading, scheduling, and crash-safe persistence depend on the host. An explicit skill path can be used initially. Read [sources](references/sources.md) only when comparing approaches or design limits.

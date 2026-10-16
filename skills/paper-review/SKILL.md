@@ -5,42 +5,42 @@ description: "Use when an already-provided academic paper needs a Chinese critic
 
 # Paper Review
 
-## 目标与边界
+## Purpose and scope
 
-基于已经提供的论文材料，写出面向专业读者的中文讲解，而不是逐段摘要。默认叙事为“问题 → 方法 → 证据 → 局限”：作者解决什么瓶颈，用什么机制，在什么条件下有哪些证据，以及结论不能延伸到哪里。
+Explain the supplied paper in Chinese for technical readers through its problem, method, evidence, and limitations. Connect the bottleneck, mechanism, experimental conditions, and limits of the conclusions; avoid paragraph-by-paragraph summaries.
 
-本 skill 不检索、下载或补全论文材料。材料未明确的机制、数值、实现细节或因果关系，直接写“材料未明确”。
+Do not search for, download, or complete missing paper materials. State when the source does not specify a mechanism, value, implementation detail, or causal link.
 
-## 默认交付
+## Default response
 
-除非用户明确要求完整报告或文档文件，输出以下四部分，并按需要调整篇幅：
+Unless a full report or document is requested, cover four parts at the appropriate depth:
 
-1. **问题**：任务、约束和旧方法的不足。
-2. **方法**：核心假设、组件职责和数据流；核心算法按动机、输入输出、训练路径、推理路径与代价深讲。
-3. **证据**：实验结论连同数据集、基线、指标、预算或协议；说明消融支持的是哪项假设。
-4. **局限**：材料直接支持的失败情形、比较边界、缺失对照和仍未证明之处。
+1. **Problem:** task, constraints, and weaknesses of prior methods.
+2. **Method:** assumptions, component roles, and data flow. Explain core algorithms through motivation, inputs/outputs, training, inference, and cost.
+3. **Evidence:** findings with datasets, baselines, metrics, budgets, and protocols. Identify which hypothesis each ablation supports.
+4. **Limitations:** documented failures, comparison boundaries, missing controls, and unproven claims.
 
-对每个关键判断标注 `【直接证据】`、`【合理推断】` 或 `【尚未证明】`。直接证据附页码、章节、图表、算法或公式编号；推断说明前提；未知说明缺少什么。
+Label each key judgment as direct evidence, reasonable inference, or unproven, using Chinese labels. Cite pages, sections, figures, tables, algorithms, or equations for direct evidence; state assumptions for inferences and missing evidence for unknowns.
 
-## 方法与比较的约束
+## Method and comparison rules
 
-- 算法深讲只使用材料支持的细节：定义输入、输出、符号及已知形状；解释模块职责、训练/推理路径、目标函数与代价。不要从结构图臆测控制流、缓存、优化器或采样顺序。
-- 只在材料充分时提供伪代码或定量复杂度；否则明确无法判断。
-- 比较方法时对齐问题设定、数据与协议、控制变量、计算/内存/标注代价、适用范围和失败模式。条件不可比时写“证据不足以判断”，不排名。
+- Explain only supported details: inputs, outputs, notation, known shapes, module roles, training/inference paths, objectives, and costs. Do not infer control flow, caching, optimizers, or sampling order from a diagram.
+- Provide pseudocode or quantitative complexity only when the source supports it; otherwise state the uncertainty.
+- Align problem settings, data, protocols, controls, compute/memory/annotation costs, scope, and failure modes. When conditions differ, report insufficient evidence rather than rank methods.
 
-## 按需扩展
+## Optional extensions
 
-- 用户明确要求“完整报告”“综述”“七章结构”或正式文档时，读取 `references/complete-report.md`。
-- 文档交付含较多公式或目标渲染器支持不确定时，读取 `references/complete-report.md` 并生成 HTML 验证公式；用户明确要求 HTML 时也按该流程交付。普通对话讲解不自动生成文件。
-- 只有用户要求未来方向时才提出方向；每项包含待补空白、可检验假设和验证路径，不设最低数量。
+- For an explicitly requested full report, review, seven-chapter structure, or formal document, read `references/complete-report.md`.
+- For document deliverables with substantial math or uncertain renderer support, read that reference and generate HTML to verify equations. Follow it for explicit HTML requests too. Ordinary explanations do not create files automatically.
+- Suggest future directions only when requested. Each needs a gap, testable hypothesis, and validation path; no minimum count.
 
-## 公式
+## Equations
 
-短公式可用 `$...$`。需要展示公式时使用 fenced `math` 块；公式仅表达材料中明确给出的内容。HTML 渲染的格式和验证要求见 `references/complete-report.md`。
+Use inline math for short expressions and fenced `math` blocks for display equations, subject to the user's presentation preferences. Include only source-supported formulas. HTML formatting and checks are in `references/complete-report.md`.
 
-## 交付前检查
+## Before delivery
 
-- 是否清楚串起问题、方法、证据与局限？
-- 关键结论是否标明证据状态，并保留可比性边界？
-- 算法、目标函数、伪代码和消融是否只陈述材料支持的内容？
-- 触发 HTML 交付条件时，是否已检查公式非零尺寸、无裁切，且长公式不会撑宽页面？
+- Connect the problem, method, evidence, and limitations.
+- Label evidence status and preserve comparison boundaries.
+- Keep algorithms, objectives, pseudocode, and ablation claims within the source.
+- When HTML is required, verify visible, unclipped equations and ensure long equations do not widen the page.
