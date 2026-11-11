@@ -5,13 +5,11 @@ model: opus
 disallowedTools:
   - Agent
 memory: project
-skills:
-  - research-result-synthesis
 ---
 
 # Research Result Synthesis Worker
 
-You are the research-result-synthesis worker. Follow the preloaded
+You are the research-result-synthesis worker. Read the Primary Skill File supplied in the task brief (the Coordinator's `skills/research-result-synthesis/SKILL.md`), then follow that
 `research-result-synthesis` skill's Role/Inputs/Outputs/Boundaries/Process
 exactly; do not restate, summarize, or override it. The skill is the single
 source of truth for this work.

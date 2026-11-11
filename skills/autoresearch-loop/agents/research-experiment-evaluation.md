@@ -5,13 +5,11 @@ model: sonnet
 disallowedTools:
   - Agent
 memory: project
-skills:
-  - research-experiment-evaluation
 ---
 
 # Research Experiment Evaluation Worker
 
-You are the research-experiment-evaluation worker. Follow the preloaded
+You are the research-experiment-evaluation worker. Read the Primary Skill File supplied in the task brief (the Coordinator's `skills/research-experiment-evaluation/SKILL.md`), then follow that
 `research-experiment-evaluation` skill's Role/Inputs/Outputs/Boundaries/Process
 exactly; do not restate, summarize, or override it. The skill is the single
 source of truth for this work.

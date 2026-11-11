@@ -67,7 +67,7 @@ Provider 的 token 计数与美元成本并非资源预算维度。当 provider 
 默认最多 5 条、6000 个序列化字符；筛选和打开任务时检查所选源文件是否变化。
 旧任务保留原快照。命令模板不会被执行，真实 agent 成本收益仍需配对任务验证。
 
-安装 Skill Hub 的 `skills/` 集合，其中包含 Coordinator、8 个 worker 和 `literature-review`。`$autoresearch-loop` 是面向用户的协调者；其八个兄弟目录是它在
+安装 Skill Hub 的 `skills/` 集合，其中包含 Coordinator、8 个内部 worker 和 `literature-review`。`$autoresearch-loop` 是面向用户的协调者；其 `skills/` 下的八个内部目录是它在
 内部加载的工作技能。
 
 ### Codex
@@ -77,6 +77,8 @@ git clone https://github.com/EinheitCxy/skill-hub.git
 cd skill-hub
 mkdir -p ~/.codex/skills
 cp -R skills/* ~/.codex/skills/
+mkdir -p ~/.codex/agents
+cp skills/autoresearch-loop/agents/research-*.toml ~/.codex/agents/
 ```
 
 重启 Codex，使其发现协调者与工作技能。
@@ -280,9 +282,9 @@ ResearchState 推进一个版本，并在一条回执中记录前后两个图哈
 
 ### 子智能体 Persona
 
-八个 worker persona 以薄壳形式随仓库发布在
+八个内部 worker persona 以薄壳形式随仓库发布在
 `skills/autoresearch-loop/agents/`（分层与职责见下表）。每个 persona
-预加载其 worker `SKILL.md`（唯一真相源），继承全部子智能体工具，仅禁用 `Agent` 以保证
+按任务 brief 的 Primary Skill File 读取内部 worker `SKILL.md`（唯一真相源），继承全部子智能体工具，仅禁用 `Agent` 以保证
 worker 为单层叶子智能体。
 
 Skill Hub 的 Claude Code 插件已在 manifest 声明八个 persona；手动安装时可复制：

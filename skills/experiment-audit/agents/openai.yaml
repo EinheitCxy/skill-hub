@@ -1,0 +1,4 @@
+interface:
+  display_name: "Experiment Audit"
+  short_description: "Audit ML execution, latency, and GPU/host memory peaks"
+  default_prompt: "Use $experiment-audit to help with this task: audit ML execution, profile latency and memory peaks, or diagnose an operational issue."

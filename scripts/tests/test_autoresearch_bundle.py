@@ -70,7 +70,7 @@ class AutoresearchBundleTests(unittest.TestCase):
                     archive.namelist(),
                 )
                 self.assertIn(
-                    "skills/research-experiment-execution/SKILL.md", archive.namelist()
+                    "skills/autoresearch-loop/skills/research-experiment-execution/SKILL.md", archive.namelist()
                 )
             self._initialize(
                 extracted / "skills", temporary / "home", temporary / "project"

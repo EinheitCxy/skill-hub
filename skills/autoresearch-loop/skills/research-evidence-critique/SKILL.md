@@ -19,7 +19,7 @@ The adversarial critique worker; tests the scientific interpretation after an in
 - Does not change the candidate, Evaluation Contract, Research State (`ResearchState`), evaluator, metrics, datasets, reports, artifact metadata, Resource Budget, Best pointer, or global journal; does not run an ablation or recompute official metrics.
 - Does not select or promote the Verified Best (Coordinator does).
 - Does not edit other skills' artifacts.
-- See [Worker Skills](../autoresearch-loop/references/worker-skills.md) for this skill's place in the loop.
+- See [Worker Skills](../../references/worker-skills.md) for this skill's place in the loop.
 
 ## Overview
 

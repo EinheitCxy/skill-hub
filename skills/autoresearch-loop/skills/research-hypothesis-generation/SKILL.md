@@ -19,7 +19,7 @@ The candidate-generation worker; converts verified evidence and the Current Best
 - Does not edit code or configuration, execute commands, modify datasets, lock the Evaluation Contract (`EvaluationSpec`), reserve budget, open tasks, judge run results, or change the Verified Best Candidate.
 - Does not select or promote the Verified Best (Coordinator does).
 - Does not edit other skills' artifacts.
-- See [Worker Skills](../autoresearch-loop/references/worker-skills.md) for this skill's place in the loop.
+- See [Worker Skills](../../references/worker-skills.md) for this skill's place in the loop.
 
 ## Overview
 

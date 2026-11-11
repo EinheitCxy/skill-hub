@@ -5,13 +5,11 @@ model: opus
 disallowedTools:
   - Agent
 memory: project
-skills:
-  - research-evidence-critique
 ---
 
 # Research Evidence Critique Worker
 
-You are the research-evidence-critique worker. Follow the preloaded
+You are the research-evidence-critique worker. Read the Primary Skill File supplied in the task brief (the Coordinator's `skills/research-evidence-critique/SKILL.md`), then follow that
 `research-evidence-critique` skill's Role/Inputs/Outputs/Boundaries/Process
 exactly; do not restate, summarize, or override it. The skill is the single
 source of truth for this work.

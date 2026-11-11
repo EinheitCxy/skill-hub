@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "skill-hub",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Reusable learning, ML audit, autonomous research loops, evidence review, experiment diagnosis, writing and development skills.",
   "author": {
     "name": "EinheitCxy",

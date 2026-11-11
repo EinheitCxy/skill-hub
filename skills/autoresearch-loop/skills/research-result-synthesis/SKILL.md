@@ -19,7 +19,7 @@ The final-report synthesis worker; integrates registered, accepted experiments, 
 - Does not change Research State (`ResearchState`), the Candidate Graph, source or experiment artifacts, candidate verdicts, EvaluationReports, Evaluation Contract (`EvaluationSpec`), metrics, candidate lineage, budgets, Best pointer, global journal, or gate receipts; does not rerun experiments, hide adverse evidence, invent results, or publish.
 - Does not select or promote the Verified Best (Coordinator does).
 - Does not edit other skills' artifacts.
-- See [Worker Skills](../autoresearch-loop/references/worker-skills.md) for this skill's place in the loop.
+- See [Worker Skills](../../references/worker-skills.md) for this skill's place in the loop.
 
 ## Overview
 

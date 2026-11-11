@@ -1088,3 +1088,11 @@ def test_cli_status_rejects_an_uncommitted_valid_graph_change(
     assert result["graph_errors"] == [
         "graph hash mismatch with initial checkpoint"
     ]
+
+
+def test_internal_worker_resolution_does_not_use_top_level_user_copy(tmp_path, monkeypatch):
+    from autoresearch.skills import resolve_skill_path
+    monkeypatch.setenv("HOME", str(tmp_path))
+    resolved = resolve_skill_path("research-experiment-execution")
+    assert resolved == ASSET.parents[2] / "skills" / "research-experiment-execution" / "SKILL.md"
+    assert resolved.is_file()

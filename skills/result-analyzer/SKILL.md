@@ -1,9 +1,9 @@
 ---
-name: results-validator
+name: result-analyzer
 description: "Diagnose surprising or conflicting experiment results from data, evaluation, and protocol evidence. Use for success-rate changes, regressions, ablations, quantization comparisons, or missing/failed trial analysis; not for choosing a new research direction."
 ---
 
-# Results Validator
+# Result Analyzer
 
 ## Outcome
 

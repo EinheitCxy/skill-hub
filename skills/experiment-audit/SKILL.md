@@ -1,9 +1,9 @@
 ---
-name: autoresearch
+name: experiment-audit
 description: "Inspect how an ML project actually runs, profile end-to-end latency and GPU/host memory peaks, or diagnose a training, checkpoint, evaluation, or packaging issue from repository evidence. Use for repository walkthroughs, runbooks, and operational diagnosis; not generic feature implementation."
 ---
 
-# AutoResearch
+# Experiment Audit
 
 ## Outcome
 

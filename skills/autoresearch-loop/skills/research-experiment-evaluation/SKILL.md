@@ -19,7 +19,7 @@ The Independent Evaluator (advisory); judges registered run artifacts against th
 - Cannot edit candidates, code, data, metrics, the evaluator, run outputs, the Evaluation Contract (`EvaluationSpec`), comparison target, Resource Budget, or execution receipts.
 - Does not select or promote the Verified Best (Coordinator does).
 - Does not edit other skills' artifacts.
-- See [Worker Skills](../autoresearch-loop/references/worker-skills.md) for this skill's place in the loop.
+- See [Worker Skills](../../references/worker-skills.md) for this skill's place in the loop.
 
 ## Overview
 

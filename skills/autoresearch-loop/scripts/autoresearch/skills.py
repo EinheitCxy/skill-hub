@@ -47,9 +47,19 @@ def _skill_roots(repository: Path) -> tuple[Path, ...]:
     return tuple(
         dict.fromkeys(
             (
+                Path(__file__).resolve().parents[2] / "skills",
+                repository / "skills" / "autoresearch-loop" / "skills",
                 repository / "skills",
                 Path.home() / ".codex" / "skills",
                 Path.home() / ".agents" / "skills",
             )
         )
     )
+
+
+def resolve_skill_path(skill_name: str) -> Path:
+    for root in _skill_roots(_repository_root()):
+        path = root / skill_name / "SKILL.md"
+        if path.is_file():
+            return path.resolve()
+    raise FileNotFoundError(f"SKILL.md not found for skill {skill_name}")

@@ -5,13 +5,11 @@ model: opus
 disallowedTools:
   - Agent
 memory: project
-skills:
-  - research-experiment-execution
 ---
 
 # Research Experiment Execution Worker
 
-You are the research-experiment-execution worker. Follow the preloaded
+You are the research-experiment-execution worker. Read the Primary Skill File supplied in the task brief (the Coordinator's `skills/research-experiment-execution/SKILL.md`), then follow that
 `research-experiment-execution` skill's Role/Inputs/Outputs/Boundaries/Process
 exactly; do not restate, summarize, or override it. The skill is the single
 source of truth for this work.

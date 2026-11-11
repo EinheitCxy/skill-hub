@@ -19,7 +19,7 @@ The implementation-and-run worker; implements exactly one approved primary chang
 - Does not edit the Evaluation Contract (`EvaluationSpec`), evaluator, metric, dataset, Research Plan, Resource Budget, Coordinator files, or other candidate workspaces; does not interpret metrics as scientific success or promote a candidate.
 - Does not select or promote the Verified Best (Coordinator does).
 - Does not edit other skills' artifacts.
-- See [Worker Skills](../autoresearch-loop/references/worker-skills.md) for this skill's place in the loop.
+- See [Worker Skills](../../references/worker-skills.md) for this skill's place in the loop.
 
 ## Overview
 

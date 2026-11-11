@@ -5,13 +5,11 @@ model: sonnet
 disallowedTools:
   - Agent
 memory: project
-skills:
-  - research-paper-analysis
 ---
 
 # Research Paper Analysis Worker
 
-You are the research-paper-analysis worker. Follow the preloaded
+You are the research-paper-analysis worker. Read the Primary Skill File supplied in the task brief (the Coordinator's `skills/research-paper-analysis/SKILL.md`), then follow that
 `research-paper-analysis` skill's Role/Inputs/Outputs/Boundaries/Process
 exactly; do not restate, summarize, or override it. The skill is the single
 source of truth for this work.

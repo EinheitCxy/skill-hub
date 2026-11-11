@@ -80,7 +80,7 @@ Coordinator-internal transport for deterministic state changes.
 ## Installation from Skill Hub
 
 `autoresearch-loop` and its eight worker directories are bundled with Skill Hub. Install the complete `skills/` collection, including `literature-review`. `$autoresearch-loop` is the user-facing
-Coordinator; its eight sibling directories are worker skills it loads
+Coordinator; its eight nested `skills/research-*` directories are worker skills it loads
 internally.
 
 ### Codex
@@ -90,6 +90,8 @@ git clone https://github.com/EinheitCxy/skill-hub.git
 cd skill-hub
 mkdir -p ~/.codex/skills
 cp -R skills/* ~/.codex/skills/
+mkdir -p ~/.codex/agents
+cp skills/autoresearch-loop/agents/research-*.toml ~/.codex/agents/
 ```
 
 Restart Codex so it discovers the Coordinator and workers.
@@ -324,7 +326,8 @@ shares the opus tier with `execution`. This selection appears in task-local
 
 Eight worker personas ship as thin shells in
 `skills/autoresearch-loop/agents/` (see the table below for tier and role).
-Each persona preloads its worker `SKILL.md` (the single source of truth),
+Each persona reads its internal worker `SKILL.md` from the Primary Skill File
+provided in the task brief (the single source of truth),
 inherits all sub-agent tools, and only forbids `Agent` so workers stay
 single-level leaf agents.
 

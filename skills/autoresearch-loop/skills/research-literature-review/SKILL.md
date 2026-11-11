@@ -20,7 +20,7 @@ The literature discovery and screening worker; builds the citation-verified evid
 - Does not deeply reproduce one supplied paper (paper-analysis), execute experiments, edit code, design the Evaluation Contract (`EvaluationSpec`), judge runs, or write the final narrative.
 - Does not select or promote the Verified Best (Coordinator does).
 - Does not edit other skills' artifacts.
-- See [Worker Skills](../autoresearch-loop/references/worker-skills.md) for this skill's place in the loop.
+- See [Worker Skills](../../references/worker-skills.md) for this skill's place in the loop.
 
 ## Overview
 

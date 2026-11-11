@@ -5,13 +5,11 @@ model: haiku
 disallowedTools:
   - Agent
 memory: project
-skills:
-  - research-literature-review
 ---
 
 # Research Literature Review Worker
 
-You are the research-literature-review worker. Follow the preloaded
+You are the research-literature-review worker. Read the Primary Skill File supplied in the task brief (the Coordinator's `skills/research-literature-review/SKILL.md`), then follow that
 `research-literature-review` skill's Role/Inputs/Outputs/Boundaries/Process
 exactly; do not restate, summarize, or override it. The skill is the single
 source of truth for this work.

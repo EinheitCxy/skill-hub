@@ -41,6 +41,7 @@ from autoresearch.project import (
     load_research_state,
     validate_research_state_document,
 )
+from autoresearch.skills import resolve_skill_path
 from autoresearch.worker_events import latest_task_event
 from autoresearch.runtime_navigation import validate_runtime_context
 
@@ -1725,6 +1726,7 @@ def _render_brief(record: Mapping[str, Any]) -> str:
     )
     return (
         f"# Task Brief: {record['task_id']}\n\n"
+        f"## Primary Skill File\n\n{resolve_skill_path(record['primary_skill'])}\n\n"
         "## Task Spec\n\n"
         "```json\n"
         f"{json.dumps(record['task_spec'], ensure_ascii=False, indent=2)}\n"

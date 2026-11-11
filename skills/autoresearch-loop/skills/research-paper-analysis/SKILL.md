@@ -19,7 +19,7 @@ The single-source deep-analysis worker; turns one supplied paper into a verified
 - Does not search a broad literature corpus (literature-review), execute source code, install dependencies, edit repository files, change evaluation rules, approve scope, or claim successful reproduction.
 - Does not select or promote the Verified Best (Coordinator does).
 - Does not edit other skills' artifacts.
-- See [Worker Skills](../autoresearch-loop/references/worker-skills.md) for this skill's place in the loop.
+- See [Worker Skills](../../references/worker-skills.md) for this skill's place in the loop.
 
 ## Overview
 

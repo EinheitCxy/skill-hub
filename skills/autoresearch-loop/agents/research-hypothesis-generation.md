@@ -5,13 +5,11 @@ model: opus
 disallowedTools:
   - Agent
 memory: project
-skills:
-  - research-hypothesis-generation
 ---
 
 # Research Hypothesis Generation Worker
 
-You are the research-hypothesis-generation worker. Follow the preloaded
+You are the research-hypothesis-generation worker. Read the Primary Skill File supplied in the task brief (the Coordinator's `skills/research-hypothesis-generation/SKILL.md`), then follow that
 `research-hypothesis-generation` skill's Role/Inputs/Outputs/Boundaries/Process
 exactly; do not restate, summarize, or override it. The skill is the single
 source of truth for this work.

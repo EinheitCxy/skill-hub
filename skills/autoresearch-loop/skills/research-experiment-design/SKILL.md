@@ -19,7 +19,7 @@ The experiment-design worker; freezes how a candidate will be judged and produce
 - Does not edit candidate code, preprocess data, run smoke or official commands, change the budget, approve the evaluation gate, inspect hidden official results, evaluate a run, or promote Current Best.
 - Does not select or promote the Verified Best (Coordinator does).
 - Does not edit other skills' artifacts.
-- See [Worker Skills](../autoresearch-loop/references/worker-skills.md) for this skill's place in the loop.
+- See [Worker Skills](../../references/worker-skills.md) for this skill's place in the loop.
 
 ## Overview
 

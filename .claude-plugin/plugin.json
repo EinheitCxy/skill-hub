@@ -1,7 +1,7 @@
 {
   "name": "skill-hub",
   "displayName": "Skill Hub",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Learning, ML audit, autonomous research loops, evidence review, experiment diagnosis and development workflows.",
   "author": {
     "name": "EinheitCxy",

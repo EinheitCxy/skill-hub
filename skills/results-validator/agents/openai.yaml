@@ -1,4 +1,0 @@
-interface:
-  display_name: "Results Validator"
-  short_description: "Audit experimental comparisons before explaining a result"
-  default_prompt: "Use $results-validator to audit these experiment results, their protocol, and the strongest explanation."

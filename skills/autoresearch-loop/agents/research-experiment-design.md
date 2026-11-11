@@ -5,13 +5,11 @@ model: sonnet
 disallowedTools:
   - Agent
 memory: project
-skills:
-  - research-experiment-design
 ---
 
 # Research Experiment Design Worker
 
-You are the research-experiment-design worker. Follow the preloaded
+You are the research-experiment-design worker. Read the Primary Skill File supplied in the task brief (the Coordinator's `skills/research-experiment-design/SKILL.md`), then follow that
 `research-experiment-design` skill's Role/Inputs/Outputs/Boundaries/Process
 exactly; do not restate, summarize, or override it. The skill is the single
 source of truth for this work.

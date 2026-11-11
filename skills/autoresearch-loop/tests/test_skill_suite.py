@@ -203,7 +203,7 @@ def test_protocol_references_cover_owned_invariants():
 
 
 def assert_worker_skill(name: str, required: tuple[str, ...]) -> None:
-    skill_root = ROOT.parent / name
+    skill_root = ROOT / "skills" / name
     skill = (skill_root / "SKILL.md").read_text(encoding="utf-8")
     lowered = skill.lower()
     missing = [term for term in required if term.lower() not in lowered]
@@ -283,7 +283,7 @@ def test_worker_skill_contracts_and_composition():
         assert "autoresearch-loop" not in capabilities, stage["id"]
 
     for name in WORKER_SKILLS:
-        root = ROOT.parent / name
+        root = ROOT / "skills" / name
         skill = (root / "SKILL.md").read_text(encoding="utf-8").lower()
         metadata = (root / "agents" / "openai.yaml").read_text(encoding="utf-8")
 
@@ -293,5 +293,5 @@ def test_worker_skill_contracts_and_composition():
         assert "allow_implicit_invocation: false" in metadata, name
         assert f"default_prompt: \"use ${name} " in metadata.lower(), name
 
-    for skill_path in ROOT.parent.glob("*/SKILL.md"):
+    for skill_path in (ROOT / "skills").glob("*/SKILL.md"):
         assert "Rick" not in skill_path.read_text(encoding="utf-8"), skill_path

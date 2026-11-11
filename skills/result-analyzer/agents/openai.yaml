@@ -1,0 +1,4 @@
+interface:
+  display_name: "Result Analyzer"
+  short_description: "Audit experimental comparisons before explaining a result"
+  default_prompt: "Use $result-analyzer to audit these experiment results, their protocol, and the strongest explanation."

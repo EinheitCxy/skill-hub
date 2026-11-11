@@ -7,13 +7,13 @@
 | 调用名称 | 用途 | 默认输出 |
 | --- | --- | --- |
 | `teacher` | 学习、练习、测验与源码讲解 | 按请求给学习练习，或源码调用链、形状变化和代码位置 |
-| `autoresearch` | 审计 ML 运行、评估、报错及性能 | 当前模式的结论与证据；profiling 区分端到端耗时和显存/RAM 峰值口径 |
+| `experiment-audit` | 审计 ML 运行、评估、报错及性能 | 当前模式的结论与证据；profiling 区分端到端耗时和显存/RAM 峰值口径 |
 | `autoresearch-loop` | 从研究目标到实验、独立评估和迭代 | Coordinator 与 8 个内部 worker；含预算、证据注册、状态恢复和运行索引 |
 | `literature-review` | 多篇文献的证据比较与正式综述 | 围绕问题的比较、来源和证据缺口 |
 | `paper-review` | 讲解已提供论文的机制与实验 | 问题、方法、证据和局限 |
 | `choose-research` | 比较研究方向并作取舍 | 一个主方向、关键重叠、首个证伪实验和失败响应 |
 | `commit-helper` | 将混杂改动整理为功能提交 | 逐提交核对、按授权 push；独立分支合并前确认，同步本地 main 并恢复 stash |
-| `results-validator` | 分析已产生的反常实验结果 | 核对条件、重算统计、竞争解释及区分实验 |
+| `result-analyzer` | 分析已产生的反常实验结果 | 核对条件、重算统计、竞争解释及区分实验 |
 | `humanizer` | 保留原意与作者语气，去除 AI 写作痕迹；中英文各走一套规则 | 粘贴文本给初稿、简短检查与终稿；文件仅写最终正文 |
 | `research-figure-creator` | 从实验数据制作可重生成的论文图 | 科学问题、统计口径、图文一致性与重生成入口 |
 | `work-journal` | 长任务的持续进度、实验记录与交接 | 一页当前状态、追加式事件日志、证据与决策依据、下一步 |
@@ -22,18 +22,18 @@
 
 ## 按需能力
 
-- `autoresearch`：请求全流程耗时、显存或内存峰值时加载 `references/profiling.md`，覆盖代表输入、冷暖缓存、阶段边界、GPU 同步、统计窗口与峰值口径。诊断 trace 与最终性能测量分开。`profile` 是 skill 工作模式；现有 snapshot 脚本仅在需要项目盘点时用 `--mode orient`，不是 profiler。
+- `experiment-audit`：请求全流程耗时、显存或内存峰值时加载 `references/profiling.md`，覆盖代表输入、冷暖缓存、阶段边界、GPU 同步、统计窗口与峰值口径。诊断 trace 与最终性能测量分开。`profile` 是 skill 工作模式；现有 snapshot 脚本仅在需要项目盘点时用 `--mode orient`，不是 profiler。
 - `teacher`：请求结合源码理解模型时，追踪真实调用链，解释输入输出、tensor shapes 与数学操作并链接代码位置；区分静态推导和运行观测，不强制先做课程规划或测验。
 
-`autoresearch-loop` 及其 8 个 worker 已完整收录在本仓库的 `skills/` 中；Runtime Navigation 已内置，无需补丁或另一个仓库。详见 [自动研究循环](skills/autoresearch-loop/README.zh.md)。
+`autoresearch-loop` 及其 8 个内部 worker 已完整收录在本仓库的 `skills/` 中；Runtime Navigation 已内置，无需补丁或另一个仓库。详见 [自动研究循环](skills/autoresearch-loop/README.zh.md)。
 
 新增三项独立工作流按需使用：结果诊断不自动切换研究方向，作图不替代数据验证，分功能提交不默认加入实验中间数据或缓存。`commit-helper` 按当前会话授权决定是否提交和 push，加载 skill 本身不代表发布授权。在独立分支上完成提交后，会确认是否直接合入 `main`；同意后先完成远端合并，再 fetch 并 fast-forward 本地 `main`。切换或同步前有未提交改动时先 stash，完成后在原分支及原 worktree 恢复；遇到分叉或恢复冲突时报告剩余处理。
 
 ## AutoResearch Loop
 
-使用 `autoresearch` 审计或诊断一个项目；使用 `autoresearch-loop` 开展持续的研究循环。
+使用 `experiment-audit` 审计或诊断一个项目；使用 `autoresearch-loop` 开展持续的研究循环。
 完整循环包含 Coordinator、8 个显式调用的 worker、内嵌 Planner/ScholarAPI、默认流程、
-运行索引、controller 与测试。worker 目录以 `research-` 开头，职责见
+运行索引、controller 与测试。worker 存放在 `skills/autoresearch-loop/skills/`，目录以 `research-` 开头，职责见
 [Worker Skills](skills/autoresearch-loop/references/worker-skills.md)。
 
 Codex 完整安装可从本仓库复制技能集合：
@@ -43,10 +43,12 @@ git clone https://github.com/EinheitCxy/skill-hub.git
 cd skill-hub
 mkdir -p ~/.codex/skills
 cp -R skills/* ~/.codex/skills/
+mkdir -p ~/.codex/agents
+cp skills/autoresearch-loop/agents/research-*.toml ~/.codex/agents/
 ```
 
-也可通过内置 `$skill-installer` 安装 `autoresearch-loop`、8 个 `research-*` worker
-和已有的 `literature-review`；只装 Coordinator 不构成完整 bundle。重启后调用
+也可通过内置 `$skill-installer` 安装 `autoresearch-loop`（已含 8 个 worker）
+和已有的 `literature-review`；worker 不再单独安装。重启后调用
 `$autoresearch-loop`。Claude Code 沿用本仓库的插件安装命令，插件已声明八个 persona。
 
 默认流程仅引用随本仓库提供的 skills。全新 HOME 下的包解压、Codex 和 Claude 目录
@@ -61,7 +63,7 @@ cp -R skills/* ~/.codex/skills/
 uv run python scripts/package_openai_plugin.py
 ```
 
-输出 `dist/skill-hub-0.3.0.zip`。通过支持自定义插件上传的 ChatGPT 插件界面导入。
+输出 `dist/skill-hub-0.3.1.zip`。通过支持自定义插件上传的 ChatGPT 插件界面导入。
 包包含所有技能及其运行资源，排除缓存和本地研究状态。运行能力仍取决于宿主提供的
 代码执行、网络与 subagent 工具；打包不自动提供这些工具。
 
@@ -115,7 +117,9 @@ claude plugin marketplace add EinheitCxy/skill-hub && claude plugin install skil
 | 原名称 | 当前名称 |
 | --- | --- |
 | `learning-loop-coach` | `teacher` |
-| `audit-ml-project` | `autoresearch` |
+| `audit-ml-project` | `experiment-audit` |
+| `autoresearch` | `experiment-audit` |
+| `results-validator` | `result-analyzer` |
 | `build-evidence-review` | `literature-review` |
 | `paper-review` | `paper-review` |
 | `narrow-research-direction` | `choose-research` |
@@ -143,7 +147,7 @@ uv run --with pyyaml python /Users/ahs/.codex/skills/.system/skill-creator/scrip
 脚本回归测试：
 
 ```bash
-uv run python -m unittest discover -s skills/autoresearch/scripts -p 'test_*.py'
+uv run python -m unittest discover -s skills/experiment-audit/scripts -p 'test_*.py'
 uv run --with bibtexparser python -m unittest discover -s skills/literature-review/scripts -p 'test_*.py'
 uv run python -m unittest discover -s skills/choose-research/scripts -p 'test_*.py'
 ```
