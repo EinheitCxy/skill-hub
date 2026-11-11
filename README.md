@@ -24,6 +24,8 @@
 - `autoresearch`：请求全流程耗时、显存或内存峰值时加载 `references/profiling.md`，覆盖代表输入、冷暖缓存、阶段边界、GPU 同步、统计窗口与峰值口径。诊断 trace 与最终性能测量分开。`profile` 是 skill 工作模式；现有 snapshot 脚本仅在需要项目盘点时用 `--mode orient`，不是 profiler。
 - `teacher`：请求结合源码理解模型时，追踪真实调用链，解释输入输出、tensor shapes 与数学操作并链接代码位置；区分静态推导和运行观测，不强制先做课程规划或测验。
 
+独立安装的 `autoresearch-loop` 可使用 [EnvOpt-inspired Runtime Navigation 补丁](integrations/autoresearch-loop/README.md)，把审计确认的项目运行入口、命令模板和产物关系接入有界 Task Context Pack。该集成单独维护，不增加本插件的 skill 数量；真实 agent 成本收益需配对验证。
+
 新增三项独立工作流按需使用：结果诊断不自动切换研究方向，作图不替代数据验证，分功能提交不默认加入实验中间数据或缓存。`commit-helper` 按当前会话授权决定是否提交和 push，加载 skill 本身不代表发布授权。在独立分支上完成提交后，会确认是否直接合入 `main`；同意后先完成远端合并，再 fetch 并 fast-forward 本地 `main`。切换或同步前有未提交改动时先 stash，完成后在原分支及原 worktree 恢复；遇到分叉或恢复冲突时报告剩余处理。
 
 ## 安装到 Codex

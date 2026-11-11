@@ -1,0 +1,1297 @@
+diff --git a/SKILL.md b/SKILL.md
+--- a/SKILL.md
++++ b/SKILL.md
+@@ -162,8 +162,11 @@
+ 2. Verify stage inputs and choose the smallest next task from `research.yaml`;
+    never hard-code a stage enum or runner sequence.
+ 3. Build a task-local Task Context Pack (`Context Manifest`) from verified artifact IDs.
+-   Read the
+-   stage's `task_owner`. Only for `subagent` work, classify it as `simple`,
++   For repeated repository searches, follow [Runtime Navigation](references/runtime-navigation.md):
++   audit/build once, select a bounded `runtime-context`, and merge its returned
++   `input_artifact_ids` before task-open. Workers read the excerpt first, then
++   only relevant source snapshots; never inject the full index by default.
++   Read the stage's `task_owner`. Only for `subagent` work, classify it as `simple`,
+    `planning`, `thinking`, or `execution`; task-open binds it directly to the
+    matching `SUBAGENT_MODELS` alias (`luna`=haiku, `sol`=sonnet, `terra`=opus) in
+    `brief.md`. A
+diff --git a/README.md b/README.md
+--- a/README.md
++++ b/README.md
+@@ -402,6 +402,14 @@
+ 
+ ## Context and Model-Call Records
+ 
++Optional [Runtime Navigation](references/runtime-navigation.md) supplies an
++audited index of entrypoints, command templates and fixed artifact relationships.
++`runtime-index-build` snapshots sources; `runtime-context` selects a bounded
++excerpt and returns the exact artifact IDs to include before task-open. Default
++limits are 5 entries/6000 serialized characters. Selected source freshness is
++checked again at task-open; rebuilding an index never changes an open task.
++It runs no commands, adds no model dependency, and makes no measured savings claim.
++
+ A worker-start hook may load only the task's `brief.md`, named skills, and
+ Task Context Pack artifacts. Complete chat history, the full journal, unrelated
+ reports, and unregistered raw files are forbidden prompt inputs.
+diff --git a/README.zh.md b/README.zh.md
+--- a/README.zh.md
++++ b/README.zh.md
+@@ -60,6 +60,12 @@
+ 用户无需手工调用 `researchctl`。它是协调者内部用于确定性状态变更的传输通道。
+ 
+ ## 独立安装
++
++可选的 [Runtime Navigation](references/runtime-navigation.md) 将已核对的运行入口、
++命令模板和固定产物关系整理成项目索引。协调者通过 `runtime-index-build` 注册索引，
++通过 `runtime-context` 筛选当前任务所需条目，并把返回的 artifact IDs 合入任务输入。
++默认最多 5 条、6000 个序列化字符；筛选和打开任务时检查所选源文件是否变化。
++旧任务保留原快照。命令模板不会被执行，真实 agent 成本收益仍需配对任务验证。
+ 
+ 安装全部九个目录。`$autoresearch-loop` 是面向用户的协调者；其八个兄弟目录是它在
+ 内部加载的工作技能。
+diff --git a/references/prompt-contracts.md b/references/prompt-contracts.md
+--- a/references/prompt-contracts.md
++++ b/references/prompt-contracts.md
+@@ -44,6 +44,13 @@
+ 
+ ## Task-local context pack
+ 
++When using [Runtime Navigation](runtime-navigation.md), include only the
++selected `runtime-context` artifact and its returned source/linked artifact
++IDs. The worker reads the excerpt before opening relevant registered source
++snapshots. Source paths in an excerpt are navigation, not additional read or
++execution permission. Do not eagerly load all linked files or inject the full
++runtime index. `task-open` rejects stale selections or missing dependency IDs.
++
+ The durable task record supplies task spec, budget reservation, skill names,
+ and Task Context Pack. `brief.md` renders this bounded
+ context pack for the worker.
+diff --git a/references/runtime-navigation.md b/references/runtime-navigation.md
+new file mode 100644
+--- /dev/null
++++ b/references/runtime-navigation.md
+@@ -0,0 +1,140 @@
++# Runtime Navigation
++
++Use this optional preparation step when workers repeatedly search the same
++repository for training/resume commands, evaluators, or fixed run artifacts.
++It is an EnvOpt-inspired information representation change, not a complete
++automatic environment optimizer. It launches no model and executes no command.
++
++## Audit and build
++
++Following repository inspection, the Coordinator records a concise JSON spec
++outside `.research/`, such as `runtime-index.spec.json`. A worker may produce
++this file inside its declared output directory; only the Coordinator registers
++and passes the resulting artifacts. Do not infer commands from filenames.
++
++```json
++{
++  "schema_version": 1,
++  "entries": [
++    {
++      "id": "train-smoke",
++      "kind": "command",
++      "summary": "Audited smoke command; config defines outputs and checkpoint naming.",
++      "tags": ["train", "smoke", "训练"],
++      "sources": ["train.py", "configs/smoke.yaml"],
++      "argv": ["uv", "run", "python", "train.py", "--config", "configs/smoke.yaml"],
++      "artifact_ids": []
++    },
++    {
++      "id": "evaluate-checkpoint",
++      "kind": "entrypoint",
++      "summary": "Evaluator loads the checkpoint and writes per-split metrics.",
++      "tags": ["evaluate", "checkpoint", "评估"],
++      "sources": ["evaluate.py"],
++      "artifact_ids": []
++    }
++  ]
++}
++```
++
++Replace example paths and argv with inspected facts. Each entry has a unique
++`id`, a `kind` (`entrypoint`, `command`, `artifact`), a short `summary`, and
++`sources`. `tags` and `artifact_ids` default to empty lists. Only `command`
++entries accept `argv`, a list preserving argument boundaries; shell strings
++are rejected. Commands remain templates until the execution worker prepares
++an independently approved RunSpec.
++
++Sources are explicitly named project-relative files, not directories or globs.
++They must remain inside the project, outside controller state, and each be at
++most 256 KiB. Include the source/config files whose changes invalidate the
++entry; freshness does not imply a scan of transitive imports or the entire
++repository. Existing access permissions still apply.
++
++An `artifact` entry can use `sources: []` with one or more verified
++`artifact_ids`. Use these IDs for **fixed** run/checkpoint/evaluation/report
++relationships, describing their relationship in the summary. Do not freeze a
++dynamic `latest` or `Current Best` into the index: resolve ResearchState and
++BestPointer at task creation as before. Never put held-out answers into an index.
++
++The following are internal Coordinator operations, not instructions for User
++to manage controller state manually. `LOOP` below denotes the skill directory.
++
++```bash
++uv run "$LOOP/scripts/researchctl.py" runtime-index-build \
++  --root /path/to/project --spec /path/to/project/runtime-index.spec.json
++```
++
++The result is a `runtime-index` artifact ID. The spec and referenced source
++files are not modified. Sources become immutable `runtime-source` snapshots;
++the index stores only concise navigation and registered identities. Identical
++builds reuse existing artifacts. Build once per relevant source revision,
++not before every worker or controller operation.
++
++## Select before task-open
++
++```bash
++uv run "$LOOP/scripts/researchctl.py" runtime-context \
++  --root /path/to/project --index-id artifact-INDEX \
++  --query 'resume checkpoint' --kind command --limit 5 --max-chars 6000
++```
++
++Selection uses case-insensitive lexical matching over entry IDs, tags,
++summaries, source paths and argv. IDs/tags rank above descriptive text; ties
++sort by ID. Chinese tags support Chinese queries. Use a few concrete terms;
++this is not a semantic search service.
++
++Only positive matches are returned. Defaults cap the excerpt at 5 entries and
++6000 **serialized characters**, not tokens. Maximum options are 10 entries and
++12000 characters. The excerpt is a complete ranked prefix; entries and argv
++are never truncated. If the first result cannot fit, narrow its contents or
++explicitly raise the character budget. `no_matches` creates no context artifact:
++perform a bounded repository lookup and amend the audited spec if useful.
++
++Merge the returned `input_artifact_ids` with the task's other declared inputs
++before `task-open`. The returned IDs include the immutable `runtime-context`
++excerpt and only the selected source/linked artifacts. Do not inject the full
++index, unrelated sources, reports, or conversation history. Existing task
++schemas and skill-count limits are unchanged.
++
++The worker reads the excerpt first, then only relevant source snapshots using
++their paths from Context Manifest. A `sources[].path` identifies the original
++project file for navigation; it does not grant permission to read or execute
++that live path. The character cap bounds the excerpt, not the contents of
++linked source/weight artifacts: do not eagerly load every linked file.
++
++## Freshness and versions
++
++Both selection and task-open verify selected source bytes against their
++registered snapshots, plus artifact availability/integrity. Missing dependency
++IDs fail before task creation or budget reservation. An unrelated stale entry
++does not invalidate a fresh selection.
++
++On a stale result, inspect the change, update the audited spec if the command
++or meaning changed, then rebuild with `--parent-id artifact-OLD-INDEX`. New
++content produces a child version; unchanged content reuses its parent. Merely
++rebuilding does not prove an unchanged command still has the same semantics.
++No API silently picks a mutable `latest` index or repairs an old task.
++An explicit build/select verifies reused snapshots. If canonical dedup returns
++an unavailable, missing or corrupt generated snapshot, the operation creates
++or reuses a verified child snapshot; it never overwrites the damaged history.
++An unavailable index must be rebuilt from the audited spec before selection.
++
++Already opened tasks keep their original brief, input IDs and source snapshots.
++New sources, context or task contracts require a new task identity. Execution
++still obeys the approved scope, RunSpec and EvaluationSpec.
++
++## Measure before claiming savings
++
++Use paired original/indexed tasks with the same project snapshot, model,
++reasoning effort, harness, permissions and execution budgets. Use fresh agent
++contexts, account for cache/order effects, and include tasks not used to refine
++the index. Check entrypoint/command/checkpoint correctness first; separately
++record time to the first valid command, repeated searches, tool calls, and
++provider-reported tokens/cost when available. Keep missing provider usage null.
++
++Include index generation and refresh costs in total cost. Retain failures and
++negative results. Keep this preparation only if correctness stays within a
++predeclared tolerance and amortized cost improves. This implementation and its
++fixture tests do not establish real-agent token savings or better ML results.
++
++Method reference: [EnvOpt, Sections 2 and 4](https://arxiv.org/html/2611.07372v1).
+diff --git a/scripts/autoresearch/runtime_navigation.py b/scripts/autoresearch/runtime_navigation.py
+new file mode 100644
+--- /dev/null
++++ b/scripts/autoresearch/runtime_navigation.py
+@@ -0,0 +1,415 @@
++"""Audited runtime navigation; command templates are data and never executed."""
++
++from __future__ import annotations
++
++from collections.abc import Mapping, Sequence
++import json
++from pathlib import Path
++import re
++from tempfile import TemporaryDirectory
++from typing import Any
++
++from autoresearch.artifacts import (
++    register_artifact,
++    register_artifact_version,
++    resolve_artifact,
++    verify_artifact,
++)
++from autoresearch.contracts import JsonObject
++from autoresearch.io import read_json, sha256_file
++from autoresearch.project import ProjectLayout
++
++
++KINDS = frozenset({"entrypoint", "command", "artifact"})
++MAX_DOCUMENT_BYTES = 262_144
++MAX_SOURCE_BYTES = 262_144
++
++
++def build_runtime_index(
++    layout: ProjectLayout,
++    spec: Mapping[str, Any],
++    *,
++    parent_id: str | None = None,
++) -> JsonObject:
++    """Snapshot audited source files and register a deterministic runtime index."""
++    if not isinstance(spec, Mapping) or set(spec) != {"schema_version", "entries"}:
++        raise ValueError(
++            "runtime index spec requires exactly schema_version and entries"
++        )
++    if type(spec["schema_version"]) is not int or spec["schema_version"] != 1:
++        raise ValueError("runtime index schema_version must be 1")
++    entries = _validate_entries(spec["entries"], stored=False)
++    # Validate every input before registration, including sources in later entries.
++    for entry in entries:
++        for source in entry["sources"]:
++            _source_path(layout, source)
++        for artifact_id in entry["artifact_ids"]:
++            _verified_artifact(layout, artifact_id)
++    parent = None
++    if parent_id is not None:
++        parent_record = resolve_artifact(layout, parent_id)
++        if (
++            parent_record["type"] != "runtime-index"
++            or parent_record["storage"] != "snapshot"
++        ):
++            raise ValueError("parent must be a runtime-index snapshot")
++        verification = verify_artifact(layout, parent_id)
++        if verification.get("available") is True and verification.get("valid") is True:
++            parent = _read_document(layout, parent_id, "runtime-index")
++    for entry in entries:
++        entry["sources"] = [
++            {
++                "path": source,
++                "artifact_id": _snapshot_source(layout, source)["artifact_id"],
++            }
++            for source in entry["sources"]
++        ]
++    document = {
++        "schema_version": 1,
++        "project_root": str(layout.root.resolve()),
++        "entries": entries,
++    }
++    if parent_id is not None and document == parent:
++        return resolve_artifact(layout, parent_id)
++    return _snapshot_document(layout, document, "runtime-index", parent_id)
++
++
++def select_runtime_context(
++    layout: ProjectLayout,
++    index_id: str,
++    query: str,
++    *,
++    kind: str | None = None,
++    limit: int = 5,
++    max_chars: int = 6000,
++) -> JsonObject:
++    """Select a ranked prefix within entry and serialized-character bounds."""
++    query = _text(query, "query", 200)
++    if kind is not None and kind not in KINDS:
++        raise ValueError("kind must be entrypoint, command, or artifact")
++    if type(limit) is not int or not 1 <= limit <= 10:
++        raise ValueError("limit must be an integer from 1 to 10")
++    if type(max_chars) is not int or not 100 <= max_chars <= 12_000:
++        raise ValueError("character budget must be an integer from 100 to 12000")
++    index = _read_document(layout, index_id, "runtime-index")
++    terms = list(dict.fromkeys(re.findall(r"\w+", query.casefold())))
++    if not terms:
++        raise ValueError("query must contain a searchable word")
++    ranked = sorted(
++        (
++            (_score(entry, terms), entry["id"], entry)
++            for entry in index["entries"]
++            if kind is None or entry["kind"] == kind
++        ),
++        key=lambda row: (-row[0], row[1]),
++    )
++    document: JsonObject = {
++        "schema_version": 1,
++        "project_root": str(layout.root.resolve()),
++        "index_artifact_id": index_id,
++        "query": query,
++        "entries": [],
++    }
++    for score, _, entry in ranked:
++        if score == 0 or len(document["entries"]) == limit:
++            break
++        candidate = {**document, "entries": [*document["entries"], entry]}
++        if len(_serialize(candidate)) > max_chars:
++            if not document["entries"]:
++                raise ValueError(
++                    "first matching entry exceeds character budget; narrow the entry or raise max_chars"
++                )
++            break
++        document = candidate
++    if not document["entries"]:
++        return {
++            "status": "no_matches",
++            "matched_entry_ids": [],
++            "context_artifact_id": None,
++            "input_artifact_ids": [],
++            "context_chars": 0,
++        }
++    dependencies = _verify_entries(layout, document["entries"])
++    context = _snapshot_document(layout, document, "runtime-context", index_id)
++    return {
++        "status": "selected",
++        "matched_entry_ids": [entry["id"] for entry in document["entries"]],
++        "context_artifact_id": context["artifact_id"],
++        "input_artifact_ids": [context["artifact_id"], *dependencies],
++        "context_chars": len(_serialize(document)),
++    }
++
++
++def validate_runtime_context(
++    layout: ProjectLayout,
++    artifact_id: str,
++    input_artifact_ids: Sequence[str],
++) -> None:
++    """Recheck selection at task-open without rewriting existing task records."""
++    context = _read_document(layout, artifact_id, "runtime-context")
++    _text(context["query"], "query", 200)
++    if len(_serialize(context)) > 12_000:
++        raise ValueError("runtime context exceeds character budget of 12000")
++    index_id = _text(context.get("index_artifact_id"), "index_artifact_id", 200)
++    index = _read_document(layout, index_id, "runtime-index")
++    indexed = {entry["id"]: entry for entry in index["entries"]}
++    if len(context["entries"]) > 10:
++        raise ValueError("runtime context must contain at most 10 entries")
++    for entry in context["entries"]:
++        if entry != indexed.get(entry["id"]):
++            raise ValueError(
++                "runtime context entries must match their registered index"
++            )
++    dependencies = _verify_entries(layout, context["entries"])
++    if not set(dependencies).issubset(input_artifact_ids):
++        raise ValueError(
++            "runtime source and linked artifacts must be included in input_artifact_ids"
++        )
++
++
++def _validate_entries(raw_entries: Any, *, stored: bool) -> list[JsonObject]:
++    if not isinstance(raw_entries, list) or not 1 <= len(raw_entries) <= 256:
++        raise ValueError("runtime index requires 1 to 256 entries")
++    entries: list[JsonObject] = []
++    ids: set[str] = set()
++    required = {"id", "kind", "summary", "sources"}
++    for raw in raw_entries:
++        if not isinstance(raw, Mapping):
++            raise ValueError("runtime entry must be an object")
++        if not required.issubset(raw) or raw.keys() - (
++            required | {"tags", "argv", "artifact_ids"}
++        ):
++            raise ValueError("runtime entry has missing or unknown fields")
++        entry_id = _text(raw["id"], "entry id", 100)
++        if entry_id in ids:
++            raise ValueError(f"duplicate runtime entry id: {entry_id}")
++        ids.add(entry_id)
++        kind = raw["kind"]
++        if not isinstance(kind, str) or kind not in KINDS:
++            raise ValueError("entry kind must be entrypoint, command, or artifact")
++        if stored:
++            if not isinstance(raw["sources"], list) or len(raw["sources"]) > 32:
++                raise ValueError("sources must be a list of at most 32 references")
++            sources = []
++            for source in raw["sources"]:
++                if not isinstance(source, dict) or set(source) != {
++                    "path",
++                    "artifact_id",
++                }:
++                    raise ValueError("invalid runtime source reference")
++                sources.append(
++                    {
++                        "path": _text(source["path"], "source path", 1000),
++                        "artifact_id": _text(
++                            source["artifact_id"], "source artifact_id", 200
++                        ),
++                    }
++                )
++            if len({source["path"] for source in sources}) != len(sources):
++                raise ValueError("duplicate runtime source path")
++        else:
++            sources = _strings(raw["sources"], "sources")
++        artifact_ids = _strings(raw.get("artifact_ids", []), "artifact_ids")
++        if not sources and (kind != "artifact" or not artifact_ids):
++            raise ValueError(
++                "entry requires source files, or linked artifacts for artifact entries"
++            )
++        entry: JsonObject = {
++            "id": entry_id,
++            "kind": kind,
++            "summary": _text(raw["summary"], "summary", 500),
++            "tags": _strings(raw.get("tags", []), "tags"),
++            "sources": sources,
++            "artifact_ids": artifact_ids,
++        }
++        if kind == "command":
++            argv = raw.get("argv")
++            if (
++                not isinstance(argv, list)
++                or not argv
++                or any(not isinstance(arg, str) or "\x00" in arg for arg in argv)
++                or not argv[0].strip()
++            ):
++                raise ValueError(
++                    "command argv must be a nonempty list of argument strings"
++                )
++            entry["argv"] = list(argv)
++        elif "argv" in raw:
++            raise ValueError("only command entries accept argv")
++        entries.append(entry)
++    return entries
++
++
++def _source_path(layout: ProjectLayout, source: str) -> Path:
++    relative = Path(source)
++    if relative.is_absolute() or ".." in relative.parts or not relative.parts:
++        raise ValueError("source must be a project-relative file path")
++    root = layout.root.resolve()
++    path = (root / relative).resolve()
++    if not path.is_relative_to(root) or path.is_relative_to(root / ".research"):
++        raise ValueError("source must stay inside the project and outside .research")
++    if not path.is_file():
++        raise FileNotFoundError(f"runtime source file missing: {source}")
++    if path.stat().st_size > MAX_SOURCE_BYTES:
++        raise ValueError(f"runtime source exceeds {MAX_SOURCE_BYTES} bytes: {source}")
++    return path
++
++
++def _snapshot_source(layout: ProjectLayout, source: str) -> JsonObject:
++    path = _source_path(layout, source)
++    record = _register_snapshot(layout, path, "runtime-source", None)
++    if sha256_file(path) != record["sha256"]:
++        raise ValueError(
++            f"runtime source changed during indexing: {source}; rebuild index"
++        )
++    return record
++
++
++def _verify_entries(layout: ProjectLayout, entries: list[JsonObject]) -> list[str]:
++    dependencies: list[str] = []
++    for entry in entries:
++        for source in entry["sources"]:
++            artifact = _verified_artifact(layout, source["artifact_id"])
++            if (
++                artifact["type"] != "runtime-source"
++                or artifact["storage"] != "snapshot"
++            ):
++                raise ValueError(
++                    "runtime source must reference a runtime-source snapshot"
++                )
++            try:
++                path = _source_path(layout, source["path"])
++                matches = sha256_file(path) == artifact["sha256"]
++            except (OSError, ValueError) as error:
++                raise ValueError(
++                    f"stale runtime source: {source['path']}; rebuild index"
++                ) from error
++            if not matches:
++                raise ValueError(
++                    f"stale runtime source: {source['path']}; rebuild index"
++                )
++            dependencies.append(artifact["artifact_id"])
++        for artifact_id in entry["artifact_ids"]:
++            _verified_artifact(layout, artifact_id)
++            dependencies.append(artifact_id)
++    return list(dict.fromkeys(dependencies))
++
++
++def _verified_artifact(layout: ProjectLayout, artifact_id: str) -> JsonObject:
++    record = resolve_artifact(layout, artifact_id)
++    result = verify_artifact(layout, artifact_id)
++    if result.get("available") is not True or result.get("valid") is not True:
++        raise ValueError(f"runtime artifact is unavailable or invalid: {artifact_id}")
++    return record
++
++
++def _read_document(
++    layout: ProjectLayout, artifact_id: str, expected_type: str
++) -> JsonObject:
++    record = _verified_artifact(layout, artifact_id)
++    if (
++        record["type"] != expected_type
++        or record["storage"] != "snapshot"
++        or record["size_bytes"] > MAX_DOCUMENT_BYTES
++    ):
++        raise ValueError(f"expected bounded {expected_type} snapshot")
++    path = Path(record["path"])
++    if (
++        expected_type == "runtime-context"
++        and len(path.read_text(encoding="utf-8")) > 12_000
++    ):
++        raise ValueError("runtime context file exceeds character budget of 12000")
++    document = read_json(path)
++    fields = {"schema_version", "project_root", "entries"}
++    if expected_type == "runtime-context":
++        fields |= {"index_artifact_id", "query"}
++    if (
++        not isinstance(document, dict)
++        or set(document) != fields
++        or type(document.get("schema_version")) is not int
++        or document["schema_version"] != 1
++        or document.get("project_root") != str(layout.root.resolve())
++    ):
++        raise ValueError("runtime document schema or project root mismatch")
++    document["entries"] = _validate_entries(document["entries"], stored=True)
++    return document
++
++
++def _snapshot_document(
++    layout: ProjectLayout,
++    document: JsonObject,
++    artifact_type: str,
++    parent_id: str | None,
++) -> JsonObject:
++    encoded = _serialize(document)
++    if len(encoded.encode("utf-8")) > MAX_DOCUMENT_BYTES:
++        raise ValueError(f"{artifact_type} exceeds document size bound")
++    with TemporaryDirectory(prefix="runtime-navigation-") as directory:
++        path = Path(directory) / f"{artifact_type}.json"
++        path.write_text(encoded, encoding="utf-8")
++        return _register_snapshot(layout, path, artifact_type, parent_id)
++
++
++def _register_snapshot(
++    layout: ProjectLayout, path: Path, artifact_type: str, parent_id: str | None
++) -> JsonObject:
++    metadata = {
++        "type": artifact_type,
++        "producer": "runtime-navigation",
++        "storage": "snapshot",
++    }
++    record = (
++        register_artifact(layout, path, metadata)
++        if parent_id is None
++        else register_artifact_version(layout, parent_id, path, metadata)
++    )
++    # Canonical dedup can return a previously unavailable, missing or corrupt
++    # snapshot. Explicit rebuild/selection creates a child instead of overwriting
++    # history; subsequent calls walk/reuse that same verified child version.
++    while True:
++        verification = verify_artifact(layout, record["artifact_id"])
++        if verification.get("available") is True and verification.get("valid") is True:
++            return record
++        record = register_artifact_version(
++            layout, record["artifact_id"], path, metadata
++        )
++
++
++def _score(entry: JsonObject, terms: list[str]) -> int:
++    names = " ".join([entry["id"], *entry["tags"]]).casefold()
++    detail = " ".join(
++        [
++            entry["summary"],
++            *(source["path"] for source in entry["sources"]),
++            *entry.get("argv", []),
++        ]
++    ).casefold()
++    return sum(3 * (term in names) + (term in detail) for term in terms)
++
++
++def _serialize(document: JsonObject) -> str:
++    return json.dumps(
++        document, ensure_ascii=False, sort_keys=True, separators=(",", ":")
++    )
++
++
++def _text(value: Any, field: str, maximum: int) -> str:
++    if (
++        not isinstance(value, str)
++        or not value.strip()
++        or len(value) > maximum
++        or "\x00" in value
++    ):
++        raise ValueError(
++            f"{field} must be nonempty text of at most {maximum} characters"
++        )
++    return value
++
++
++def _strings(value: Any, field: str) -> list[str]:
++    if not isinstance(value, list) or len(value) > 32:
++        raise ValueError(f"{field} must be a list of at most 32 strings")
++    result = [_text(item, field, 1000) for item in value]
++    if len(result) != len(set(result)):
++        raise ValueError(f"{field} must not contain duplicates")
++    return result
+diff --git a/scripts/autoresearch/workflow/tasks.py b/scripts/autoresearch/workflow/tasks.py
+--- a/scripts/autoresearch/workflow/tasks.py
++++ b/scripts/autoresearch/workflow/tasks.py
+@@ -42,6 +42,7 @@
+     validate_research_state_document,
+ )
+ from autoresearch.worker_events import latest_task_event
++from autoresearch.runtime_navigation import validate_runtime_context
+ 
+ from .recovery import (
+     HEADING_PATTERN,
+@@ -1657,6 +1658,9 @@
+                 for field in CONTEXT_ARTIFACT_FIELDS
+             }
+         )
++    for artifact in artifacts:
++        if artifact["type"] == "runtime-context":
++            validate_runtime_context(layout, artifact["artifact_id"], artifact_ids)
+     return {"input_artifacts": artifacts}
+ 
+ 
+diff --git a/scripts/researchctl.py b/scripts/researchctl.py
+--- a/scripts/researchctl.py
++++ b/scripts/researchctl.py
+@@ -64,6 +64,7 @@
+     validate_graph,
+ )
+ from autoresearch.records import append_model_call
++from autoresearch.runtime_navigation import build_runtime_index, select_runtime_context
+ from autoresearch.worker_events import (
+     reconcile_worker_reports,
+     record_worker_event,
+@@ -107,6 +108,19 @@
+     status_parser = commands.add_parser("status")
+     status_parser.add_argument("--root", type=Path, required=True)
+ 
++    index_parser = commands.add_parser("runtime-index-build")
++    index_parser.add_argument("--root", type=Path, required=True)
++    index_parser.add_argument("--spec", type=Path, required=True)
++    index_parser.add_argument("--parent-id")
++
++    context_parser = commands.add_parser("runtime-context")
++    context_parser.add_argument("--root", type=Path, required=True)
++    context_parser.add_argument("--index-id", required=True)
++    context_parser.add_argument("--query", required=True)
++    context_parser.add_argument("--kind", choices=("entrypoint", "command", "artifact"))
++    context_parser.add_argument("--limit", type=int, default=5)
++    context_parser.add_argument("--max-chars", type=int, default=6000)
++
+     gate_request_parser = commands.add_parser("gate-request")
+     gate_request_parser.add_argument("--root", type=Path, required=True)
+     gate_request_parser.add_argument(
+@@ -340,6 +354,19 @@
+             return _validate(arguments.root)
+         if arguments.command == "status":
+             return _status(arguments.root)
++        if arguments.command == "runtime-index-build":
++            _emit(build_runtime_index(
++                ProjectLayout.from_root(arguments.root),
++                read_json(arguments.spec), parent_id=arguments.parent_id,
++            ))
++            return 0
++        if arguments.command == "runtime-context":
++            _emit(select_runtime_context(
++                ProjectLayout.from_root(arguments.root), arguments.index_id,
++                arguments.query, kind=arguments.kind, limit=arguments.limit,
++                max_chars=arguments.max_chars,
++            ))
++            return 0
+         if arguments.command == "gate-request":
+             return _gate_request(
+                 arguments.root, arguments.type, arguments.payload
+@@ -526,6 +553,7 @@
+         "run-cancel", "run-collect", "run-cleanup", "artifact-register",
+         "artifact-unavailable", "artifact-alias-bind", "record-call", "task-open", "task-complete",
+         "task-report-finalize", "worker-event", "worker-reconcile", "checkpoint",
++        "runtime-index-build", "runtime-context",
+         "transition", "candidate-create", "candidate-update", "candidate-verdict", "candidate-select",
+         "evaluation-lock", "evaluation-cycle-bind", "promote-provisional",
+         "promote-current",
+diff --git a/tests/test_runtime_navigation.py b/tests/test_runtime_navigation.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_runtime_navigation.py
+@@ -0,0 +1,579 @@
++from __future__ import annotations
++
++from copy import deepcopy
++import importlib
++import json
++from pathlib import Path
++
++import pytest
++
++from autoresearch.artifacts import (
++    mark_artifact_unavailable,
++    register_artifact,
++    resolve_artifact,
++    verify_artifact,
++)
++from autoresearch.io import read_json, read_jsonl
++from autoresearch.workflow import open_task
++from researchctl import main
++
++
++def navigation():
++    return importlib.import_module("autoresearch.runtime_navigation")
++
++
++@pytest.fixture
++def runtime_spec(project_layout):
++    root = project_layout.root
++    (root / "src").mkdir()
++    (root / "src/train.py").write_text("print('train')\n", encoding="utf-8")
++    (root / "src/evaluate.py").write_text("print('evaluate')\n", encoding="utf-8")
++    return {
++        "schema_version": 1,
++        "entries": [
++            {
++                "id": "train-smoke",
++                "kind": "command",
++                "summary": "Smoke training with a small sample before a full run.",
++                "tags": ["train", "smoke", "训练"],
++                "sources": ["src/train.py"],
++                "argv": ["uv", "run", "python", "src/train.py", "--name", "a b"],
++                "artifact_ids": [],
++            },
++            {
++                "id": "evaluate",
++                "kind": "entrypoint",
++                "summary": "Evaluate a fixed checkpoint and write metrics.",
++                "tags": ["evaluate", "metrics", "评估"],
++                "sources": ["src/evaluate.py"],
++                "artifact_ids": [],
++            },
++        ],
++    }
++
++
++def index_document(layout, record):
++    return read_json(Path(record["path"]))
++
++
++def task_spec(task_id, inputs):
++    return {
++        "cycle_id": "cycle-nav",
++        "task_id": task_id,
++        "candidate_id": "candidate-nav",
++        "stage_id": "intake",
++        "primary_skill": "autoresearch-loop",
++        "capability_skills": [],
++        "input_artifact_ids": inputs,
++        "budget_slice": {"wall_seconds": 300},
++        "editable_paths": [],
++        "output_path": f"cycles/cycle-nav/tasks/{task_id}/report.md",
++        "stop_conditions": ["budget exhausted"],
++        "work_type": "simple",
++    }
++
++
++def test_build_reuses_identical_index_and_preserves_argv(project_layout, runtime_spec):
++    first = navigation().build_runtime_index(project_layout, runtime_spec)
++    second = navigation().build_runtime_index(project_layout, runtime_spec)
++    assert first["artifact_id"] == second["artifact_id"]
++    entry = index_document(project_layout, first)["entries"][0]
++    assert entry["argv"] == ["uv", "run", "python", "src/train.py", "--name", "a b"]
++    source = resolve_artifact(project_layout, entry["sources"][0]["artifact_id"])
++    assert Path(source["path"]).read_text() == "print('train')\n"
++    assert source["storage"] == "snapshot"
++    assert not (project_layout.root / "a b").exists()
++
++
++def test_select_supplies_only_relevant_registered_inputs(project_layout, runtime_spec):
++    index = navigation().build_runtime_index(project_layout, runtime_spec)
++    result = navigation().select_runtime_context(
++        project_layout, index["artifact_id"], "train"
++    )
++    assert result["status"] == "selected"
++    assert result["matched_entry_ids"] == ["train-smoke"]
++    context = read_json(
++        Path(resolve_artifact(project_layout, result["context_artifact_id"])["path"])
++    )
++    assert [entry["id"] for entry in context["entries"]] == ["train-smoke"]
++    source_id = context["entries"][0]["sources"][0]["artifact_id"]
++    assert result["input_artifact_ids"] == [result["context_artifact_id"], source_id]
++    assert index["artifact_id"] not in result["input_artifact_ids"]
++    assert result["context_chars"] <= 6000
++
++
++def test_select_links_fixed_run_artifacts(project_layout, runtime_spec):
++    metric_path = project_layout.root / "metrics.json"
++    metric_path.write_text('{"accuracy": 0.8}')
++    metric = register_artifact(
++        project_layout,
++        metric_path,
++        {
++            "type": "metrics",
++            "producer": "test",
++            "storage": "snapshot",
++        },
++    )
++    runtime_spec["entries"][1]["artifact_ids"] = [metric["artifact_id"]]
++    index = navigation().build_runtime_index(project_layout, runtime_spec)
++    result = navigation().select_runtime_context(
++        project_layout, index["artifact_id"], "评估"
++    )
++    assert metric["artifact_id"] in result["input_artifact_ids"]
++
++
++def test_query_filters_limits_and_does_not_return_zero_score_entries(
++    project_layout, runtime_spec
++):
++    runtime_spec["entries"][0]["tags"].append("common")
++    runtime_spec["entries"][1]["tags"].append("common")
++    index = navigation().build_runtime_index(project_layout, runtime_spec)
++    selected = navigation().select_runtime_context(
++        project_layout, index["artifact_id"], "common", limit=1
++    )
++    assert selected["matched_entry_ids"] == ["evaluate"]
++    filtered = navigation().select_runtime_context(
++        project_layout, index["artifact_id"], "common", kind="command"
++    )
++    assert filtered["matched_entry_ids"] == ["train-smoke"]
++    before = project_layout.artifact_index.read_bytes()
++    empty = navigation().select_runtime_context(
++        project_layout, index["artifact_id"], "nonexistent-keyword"
++    )
++    assert empty["status"] == "no_matches"
++    assert empty["input_artifact_ids"] == []
++    assert project_layout.artifact_index.read_bytes() == before
++
++
++def test_character_budget_never_truncates_commands(project_layout, runtime_spec):
++    index = navigation().build_runtime_index(project_layout, runtime_spec)
++    with pytest.raises(ValueError, match="character budget"):
++        navigation().select_runtime_context(
++            project_layout, index["artifact_id"], "train", max_chars=100
++        )
++
++
++@pytest.mark.parametrize(
++    "path", ["../outside.py", "/tmp/outside.py", ".research/state.json"]
++)
++def test_build_rejects_sources_outside_repository_or_in_controller_state(
++    project_layout, runtime_spec, path
++):
++    runtime_spec["entries"][0]["sources"] = [path]
++    with pytest.raises(ValueError, match="source"):
++        navigation().build_runtime_index(project_layout, runtime_spec)
++    assert read_jsonl(project_layout.artifact_index) == []
++
++
++def test_build_rejects_symlink_escape(project_layout, runtime_spec, tmp_path):
++    outside = tmp_path.parent / f"{tmp_path.name}-outside.py"
++    outside.write_text("outside")
++    try:
++        (project_layout.root / "escape.py").symlink_to(outside)
++        runtime_spec["entries"][0]["sources"] = ["escape.py"]
++        with pytest.raises(ValueError, match="source"):
++            navigation().build_runtime_index(project_layout, runtime_spec)
++    finally:
++        outside.unlink()
++
++
++@pytest.mark.parametrize(
++    "mutation", ["duplicate", "missing-source", "shell-string", "unknown-field"]
++)
++def test_invalid_spec_is_rejected_before_registering_inputs(
++    project_layout, runtime_spec, mutation
++):
++    if mutation == "duplicate":
++        runtime_spec["entries"].append(deepcopy(runtime_spec["entries"][0]))
++    elif mutation == "missing-source":
++        runtime_spec["entries"][1]["sources"] = ["missing.py"]
++    elif mutation == "shell-string":
++        runtime_spec["entries"][0]["argv"] = "uv run python src/train.py"
++    else:
++        runtime_spec["entries"][1]["execute"] = True
++    with pytest.raises((ValueError, FileNotFoundError)):
++        navigation().build_runtime_index(project_layout, runtime_spec)
++    assert read_jsonl(project_layout.artifact_index) == []
++
++
++def test_changed_source_requires_new_index_but_unrelated_entry_remains_usable(
++    project_layout, runtime_spec
++):
++    first = navigation().build_runtime_index(project_layout, runtime_spec)
++    (project_layout.root / "src/train.py").write_text("print('updated')\n")
++    with pytest.raises(ValueError, match="stale"):
++        navigation().select_runtime_context(
++            project_layout, first["artifact_id"], "train"
++        )
++    unaffected = navigation().select_runtime_context(
++        project_layout, first["artifact_id"], "evaluate"
++    )
++    assert unaffected["matched_entry_ids"] == ["evaluate"]
++    second = navigation().build_runtime_index(
++        project_layout, runtime_spec, parent_id=first["artifact_id"]
++    )
++    assert second["artifact_id"] != first["artifact_id"]
++    assert second["parent_artifact_id"] == first["artifact_id"]
++    assert (
++        navigation().select_runtime_context(
++            project_layout, second["artifact_id"], "train"
++        )["status"]
++        == "selected"
++    )
++
++
++def test_task_open_checks_dependencies_and_staleness_before_writing(
++    project_layout, runtime_spec
++):
++    index = navigation().build_runtime_index(project_layout, runtime_spec)
++    result = navigation().select_runtime_context(
++        project_layout, index["artifact_id"], "train"
++    )
++    with pytest.raises(ValueError, match="input_artifact_ids"):
++        open_task(
++            project_layout, task_spec("missing-input", [result["context_artifact_id"]])
++        )
++    (project_layout.root / "src/train.py").write_text(
++        "print('changed after selection')\n"
++    )
++    with pytest.raises(ValueError, match="stale"):
++        open_task(
++            project_layout, task_spec("stale-input", result["input_artifact_ids"])
++        )
++    assert not (project_layout.cycles / "cycle-nav").exists()
++
++
++def test_open_task_keeps_immutable_context_when_index_is_refreshed(
++    project_layout, runtime_spec
++):
++    first = navigation().build_runtime_index(project_layout, runtime_spec)
++    result = navigation().select_runtime_context(
++        project_layout, first["artifact_id"], "train"
++    )
++    task = open_task(project_layout, task_spec("bound", result["input_artifact_ids"]))
++    brief_path = Path(task["brief_path"])
++    before = brief_path.read_bytes()
++    (project_layout.root / "src/train.py").write_text("print('next revision')\n")
++    second = navigation().build_runtime_index(
++        project_layout, runtime_spec, parent_id=first["artifact_id"]
++    )
++    assert first["artifact_id"] != second["artifact_id"]
++    assert brief_path.read_bytes() == before
++    manifest_ids = [
++        row["artifact_id"] for row in task["context_manifest"]["input_artifacts"]
++    ]
++    assert manifest_ids == result["input_artifact_ids"]
++    source = resolve_artifact(project_layout, manifest_ids[1])
++    assert Path(source["path"]).read_text() == "print('train')\n"
++
++
++def test_cli_build_select_and_task_open(project_layout, runtime_spec, capsys):
++    spec_path = project_layout.root / "runtime-spec.json"
++    spec_path.write_text(json.dumps(runtime_spec))
++    assert (
++        main(
++            [
++                "runtime-index-build",
++                "--root",
++                str(project_layout.root),
++                "--spec",
++                str(spec_path),
++            ]
++        )
++        == 0
++    )
++    index = json.loads(capsys.readouterr().out)
++    assert (
++        main(
++            [
++                "runtime-context",
++                "--root",
++                str(project_layout.root / ".research"),
++                "--index-id",
++                index["artifact_id"],
++                "--query",
++                "训练",
++            ]
++        )
++        == 0
++    )
++    selected = json.loads(capsys.readouterr().out)
++    task_path = project_layout.root / "task-spec.json"
++    task_path.write_text(
++        json.dumps(task_spec("cli-task", selected["input_artifact_ids"]))
++    )
++    assert (
++        main(
++            ["task-open", "--root", str(project_layout.root), "--spec", str(task_path)]
++        )
++        == 0
++    )
++    task = json.loads(capsys.readouterr().out)
++    assert task["task_spec"]["input_artifact_ids"] == selected["input_artifact_ids"]
++
++
++def test_unchanged_refresh_reuses_parent_version(project_layout, runtime_spec):
++    first = navigation().build_runtime_index(project_layout, runtime_spec)
++    refreshed = navigation().build_runtime_index(
++        project_layout, runtime_spec, parent_id=first["artifact_id"]
++    )
++    assert refreshed["artifact_id"] == first["artifact_id"]
++
++
++def test_selected_artifacts_must_remain_available_at_task_open(
++    project_layout, runtime_spec
++):
++    index = navigation().build_runtime_index(project_layout, runtime_spec)
++    selected = navigation().select_runtime_context(
++        project_layout, index["artifact_id"], "train"
++    )
++    mark_artifact_unavailable(
++        project_layout, selected["input_artifact_ids"][1], "removed"
++    )
++    with pytest.raises(ValueError, match="invalid input artifact"):
++        open_task(
++            project_layout, task_spec("unavailable", selected["input_artifact_ids"])
++        )
++    assert not (project_layout.cycles / "cycle-nav").exists()
++
++
++def test_context_cannot_omit_sources_declared_by_index(project_layout, runtime_spec):
++    index = navigation().build_runtime_index(project_layout, runtime_spec)
++    selected = navigation().select_runtime_context(
++        project_layout, index["artifact_id"], "train"
++    )
++    record = resolve_artifact(project_layout, selected["context_artifact_id"])
++    forged = read_json(Path(record["path"]))
++    forged["entries"][0]["sources"] = []
++    forged["entries"][0]["kind"] = "artifact"
++    forged["entries"][0].pop("argv")
++    forged["entries"][0]["artifact_ids"] = [index["artifact_id"]]
++    forged_path = project_layout.root / "forged-context.json"
++    forged_path.write_text(json.dumps(forged))
++    forged_record = register_artifact(
++        project_layout,
++        forged_path,
++        {
++            "type": "runtime-context",
++            "producer": "test",
++            "storage": "snapshot",
++        },
++    )
++    with pytest.raises(ValueError, match="match their registered index"):
++        open_task(
++            project_layout,
++            task_spec("forged", [forged_record["artifact_id"], index["artifact_id"]]),
++        )
++
++
++def test_character_budget_returns_complete_ranked_prefix(project_layout, runtime_spec):
++    for entry in runtime_spec["entries"]:
++        entry["tags"].append("common")
++    index = navigation().build_runtime_index(project_layout, runtime_spec)
++    first = navigation().select_runtime_context(
++        project_layout, index["artifact_id"], "common", limit=1
++    )
++    budget = first["context_chars"] + 1
++    selected = navigation().select_runtime_context(
++        project_layout, index["artifact_id"], "common", max_chars=budget
++    )
++    record = resolve_artifact(project_layout, selected["context_artifact_id"])
++    assert selected["matched_entry_ids"] == ["evaluate"]
++    assert selected["context_chars"] == len(Path(record["path"]).read_text())
++    assert selected["context_chars"] <= budget
++
++
++@pytest.mark.parametrize(
++    "options",
++    [
++        {"limit": 0},
++        {"limit": 11},
++        {"limit": True},
++        {"max_chars": 12001},
++        {"kind": "unknown"},
++    ],
++)
++def test_invalid_selection_bounds_rejected(project_layout, runtime_spec, options):
++    index = navigation().build_runtime_index(project_layout, runtime_spec)
++    with pytest.raises(ValueError):
++        navigation().select_runtime_context(
++            project_layout, index["artifact_id"], "train", **options
++        )
++
++
++@pytest.mark.parametrize("target", ["source", "index", "context"])
++@pytest.mark.parametrize("damage", ["unavailable", "missing", "corrupt"])
++def test_explicit_rebuild_and_selection_replace_invalid_snapshots(
++    project_layout, runtime_spec, target, damage
++):
++    index = navigation().build_runtime_index(project_layout, runtime_spec)
++    selected = navigation().select_runtime_context(
++        project_layout, index["artifact_id"], "train"
++    )
++    old_id = {
++        "source": selected["input_artifact_ids"][1],
++        "index": index["artifact_id"],
++        "context": selected["context_artifact_id"],
++    }[target]
++    old_path = Path(resolve_artifact(project_layout, old_id)["path"])
++    if damage == "unavailable":
++        mark_artifact_unavailable(project_layout, old_id, "fixture unavailable")
++    elif damage == "missing":
++        old_path.unlink()
++    else:
++        old_path.write_text("corrupt fixture")
++    old_bytes = old_path.read_bytes() if old_path.exists() else None
++    if target != "context":
++        index = navigation().build_runtime_index(project_layout, runtime_spec)
++    refreshed = navigation().select_runtime_context(
++        project_layout, index["artifact_id"], "train"
++    )
++    new_id = {
++        "source": refreshed["input_artifact_ids"][1],
++        "index": index["artifact_id"],
++        "context": refreshed["context_artifact_id"],
++    }[target]
++    assert new_id != old_id
++    assert resolve_artifact(project_layout, new_id)["parent_artifact_id"] == old_id
++    for artifact_id in [index["artifact_id"], *refreshed["input_artifact_ids"]]:
++        verification = verify_artifact(project_layout, artifact_id)
++        assert verification["available"] is True
++        assert verification["valid"] is True
++    assert (old_path.read_bytes() if old_path.exists() else None) == old_bytes
++    if damage == "unavailable":
++        assert resolve_artifact(project_layout, old_id)["availability"] == "unavailable"
++
++
++def test_task_open_rejects_external_context(project_layout, runtime_spec):
++    index = navigation().build_runtime_index(project_layout, runtime_spec)
++    selected = navigation().select_runtime_context(
++        project_layout, index["artifact_id"], "train"
++    )
++    context = resolve_artifact(project_layout, selected["context_artifact_id"])
++    external_path = project_layout.root / "external-context.json"
++    external_path.write_bytes(Path(context["path"]).read_bytes())
++    external = register_artifact(
++        project_layout,
++        external_path,
++        {
++            "type": "runtime-context",
++            "producer": "test",
++            "storage": "external",
++        },
++    )
++    with pytest.raises(ValueError, match="snapshot"):
++        open_task(
++            project_layout,
++            task_spec(
++                "external",
++                [external["artifact_id"], *selected["input_artifact_ids"][1:]],
++            ),
++        )
++
++
++def test_selection_rejects_external_source_reference(project_layout, runtime_spec):
++    index = navigation().build_runtime_index(project_layout, runtime_spec)
++    external = register_artifact(
++        project_layout,
++        project_layout.root / "src/train.py",
++        {
++            "type": "runtime-source",
++            "producer": "test",
++            "storage": "external",
++        },
++    )
++    document = index_document(project_layout, index)
++    document["entries"][0]["sources"][0]["artifact_id"] = external["artifact_id"]
++    path = project_layout.root / "external-source-index.json"
++    path.write_text(json.dumps(document))
++    forged = register_artifact(
++        project_layout,
++        path,
++        {
++            "type": "runtime-index",
++            "producer": "test",
++            "storage": "snapshot",
++        },
++    )
++    with pytest.raises(ValueError, match="snapshot"):
++        navigation().select_runtime_context(
++            project_layout, forged["artifact_id"], "train"
++        )
++
++
++def test_task_open_rejects_oversized_manually_registered_context(
++    project_layout, runtime_spec
++):
++    index = navigation().build_runtime_index(project_layout, runtime_spec)
++    selected = navigation().select_runtime_context(
++        project_layout, index["artifact_id"], "train"
++    )
++    context = resolve_artifact(project_layout, selected["context_artifact_id"])
++    document = read_json(Path(context["path"]))
++    document["query"] = "x" * 15000
++    path = project_layout.root / "oversized-context.json"
++    path.write_text(json.dumps(document))
++    forged = register_artifact(
++        project_layout,
++        path,
++        {
++            "type": "runtime-context",
++            "producer": "test",
++            "storage": "snapshot",
++        },
++    )
++    with pytest.raises(ValueError, match="query|character"):
++        open_task(
++            project_layout,
++            task_spec(
++                "oversized",
++                [forged["artifact_id"], *selected["input_artifact_ids"][1:]],
++            ),
++        )
++
++
++def test_task_open_caps_actual_context_file_including_whitespace(
++    project_layout, runtime_spec
++):
++    index = navigation().build_runtime_index(project_layout, runtime_spec)
++    selected = navigation().select_runtime_context(
++        project_layout, index["artifact_id"], "train"
++    )
++    context = resolve_artifact(project_layout, selected["context_artifact_id"])
++    path = project_layout.root / "padded-context.json"
++    path.write_text(Path(context["path"]).read_text() + " " * 13000)
++    padded = register_artifact(
++        project_layout,
++        path,
++        {
++            "type": "runtime-context",
++            "producer": "test",
++            "storage": "snapshot",
++        },
++    )
++    with pytest.raises(ValueError, match="character"):
++        open_task(
++            project_layout,
++            task_spec(
++                "padded", [padded["artifact_id"], *selected["input_artifact_ids"][1:]]
++            ),
++        )
++
++
++def test_explicit_parent_refresh_recovers_unavailable_index(
++    project_layout, runtime_spec
++):
++    first = navigation().build_runtime_index(project_layout, runtime_spec)
++    mark_artifact_unavailable(
++        project_layout, first["artifact_id"], "fixture unavailable"
++    )
++    refreshed = navigation().build_runtime_index(
++        project_layout, runtime_spec, parent_id=first["artifact_id"]
++    )
++    assert refreshed["parent_artifact_id"] == first["artifact_id"]
++    assert (
++        navigation().select_runtime_context(
++            project_layout, refreshed["artifact_id"], "train"
++        )["status"]
++        == "selected"
++    )
