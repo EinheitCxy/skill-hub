@@ -1,0 +1,6 @@
+{"intent":"Independently evaluate these registered run artifacts against the locked EvaluationSpec","expected_skill":"research-experiment-evaluation"}
+{"intent":"Apply execution, comparability, and evidence hard gates before comparing metrics","expected_skill":"research-experiment-evaluation"}
+{"intent":"Assess uncertainty, slice regressions, confounds, runtime, and robustness without editing the candidate","expected_skill":"research-experiment-evaluation"}
+{"intent":"Implement and repair the candidate code before its official run","expected_skill":"research-experiment-execution","negative_for":["research-experiment-evaluation"]}
+{"intent":"Write a narrative final report across accepted and negative evidence","expected_skill":"research-result-synthesis","negative_for":["research-experiment-evaluation"]}
+{"intent":"Evaluate this run while remaining blind to the planner's expected result","expected_skill":"research-experiment-evaluation","expectations":["Uses locked evaluator hash","Cannot modify candidate","Produces verdict recommendation"]}

@@ -1,6 +1,6 @@
 # Skill Hub
 
-十个按需使用的学习、研究、开发与写作工作流 skills。默认只完成当前问题；完整课程、正式综述和决策包仅在明确需要时展开。
+学习、研究、开发与写作工作流 skills，包含完整的自动研究循环。默认只完成当前问题；完整课程、正式综述和决策包仅在明确需要时展开。
 
 ## 选择 skill
 
@@ -8,6 +8,7 @@
 | --- | --- | --- |
 | `teacher` | 学习、练习、测验与源码讲解 | 按请求给学习练习，或源码调用链、形状变化和代码位置 |
 | `autoresearch` | 审计 ML 运行、评估、报错及性能 | 当前模式的结论与证据；profiling 区分端到端耗时和显存/RAM 峰值口径 |
+| `autoresearch-loop` | 从研究目标到实验、独立评估和迭代 | Coordinator 与 8 个内部 worker；含预算、证据注册、状态恢复和运行索引 |
 | `literature-review` | 多篇文献的证据比较与正式综述 | 围绕问题的比较、来源和证据缺口 |
 | `paper-review` | 讲解已提供论文的机制与实验 | 问题、方法、证据和局限 |
 | `choose-research` | 比较研究方向并作取舍 | 一个主方向、关键重叠、首个证伪实验和失败响应 |
@@ -24,9 +25,45 @@
 - `autoresearch`：请求全流程耗时、显存或内存峰值时加载 `references/profiling.md`，覆盖代表输入、冷暖缓存、阶段边界、GPU 同步、统计窗口与峰值口径。诊断 trace 与最终性能测量分开。`profile` 是 skill 工作模式；现有 snapshot 脚本仅在需要项目盘点时用 `--mode orient`，不是 profiler。
 - `teacher`：请求结合源码理解模型时，追踪真实调用链，解释输入输出、tensor shapes 与数学操作并链接代码位置；区分静态推导和运行观测，不强制先做课程规划或测验。
 
-独立安装的 `autoresearch-loop` 可使用 [EnvOpt-inspired Runtime Navigation 补丁](integrations/autoresearch-loop/README.md)，把审计确认的项目运行入口、命令模板和产物关系接入有界 Task Context Pack。该集成单独维护，不增加本插件的 skill 数量；真实 agent 成本收益需配对验证。
+`autoresearch-loop` 及其 8 个 worker 已完整收录在本仓库的 `skills/` 中；Runtime Navigation 已内置，无需补丁或另一个仓库。详见 [自动研究循环](skills/autoresearch-loop/README.zh.md)。
 
 新增三项独立工作流按需使用：结果诊断不自动切换研究方向，作图不替代数据验证，分功能提交不默认加入实验中间数据或缓存。`commit-helper` 按当前会话授权决定是否提交和 push，加载 skill 本身不代表发布授权。在独立分支上完成提交后，会确认是否直接合入 `main`；同意后先完成远端合并，再 fetch 并 fast-forward 本地 `main`。切换或同步前有未提交改动时先 stash，完成后在原分支及原 worktree 恢复；遇到分叉或恢复冲突时报告剩余处理。
+
+## AutoResearch Loop
+
+使用 `autoresearch` 审计或诊断一个项目；使用 `autoresearch-loop` 开展持续的研究循环。
+完整循环包含 Coordinator、8 个显式调用的 worker、内嵌 Planner/ScholarAPI、默认流程、
+运行索引、controller 与测试。worker 目录以 `research-` 开头，职责见
+[Worker Skills](skills/autoresearch-loop/references/worker-skills.md)。
+
+Codex 完整安装可从本仓库复制技能集合：
+
+```bash
+git clone https://github.com/EinheitCxy/skill-hub.git
+cd skill-hub
+mkdir -p ~/.codex/skills
+cp -R skills/* ~/.codex/skills/
+```
+
+也可通过内置 `$skill-installer` 安装 `autoresearch-loop`、8 个 `research-*` worker
+和已有的 `literature-review`；只装 Coordinator 不构成完整 bundle。重启后调用
+`$autoresearch-loop`。Claude Code 沿用本仓库的插件安装命令，插件已声明八个 persona。
+
+默认流程仅引用随本仓库提供的 skills。全新 HOME 下的包解压、Codex 和 Claude 目录
+布局均需通过初始化与状态校验。真实执行仍要求宿主工具、项目依赖和用户已批准的范围
+与预算。安装和初始化本身不是一次研究实验成功的证据。
+
+## 安装到 ChatGPT 网页版
+
+仓库提供 `plugin.json` 与可移植打包器：
+
+```bash
+uv run python scripts/package_openai_plugin.py
+```
+
+输出 `dist/skill-hub-0.3.0.zip`。通过支持自定义插件上传的 ChatGPT 插件界面导入。
+包包含所有技能及其运行资源，排除缓存和本地研究状态。运行能力仍取决于宿主提供的
+代码执行、网络与 subagent 工具；打包不自动提供这些工具。
 
 ## 安装到 Codex
 
@@ -112,3 +149,10 @@ uv run python -m unittest discover -s skills/choose-research/scripts -p 'test_*.
 ```
 
 Claude Code 可用时，运行 `claude plugin validate .` 检查插件清单。正式报告的内容与渲染仍需按对应 skill 的交付要求验证。
+
+完整 loop 测试：
+
+```bash
+uv run --with pytest --with 'pyyaml>=6,<7' python -m pytest skills/autoresearch-loop/tests -q
+uv run --with pytest --with 'pyyaml>=6,<7' python -m pytest scripts/tests -q
+```

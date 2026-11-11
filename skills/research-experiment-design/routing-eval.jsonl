@@ -1,0 +1,6 @@
+{"intent":"Design a comparable ML experiment with locked metrics, splits, seeds, and stop conditions","expected_skill":"research-experiment-design"}
+{"intent":"Audit leakage and produce a lock-ready EvaluationSpec before official results","expected_skill":"research-experiment-design"}
+{"intent":"Separate smoke and official commands and estimate the candidate budget slice","expected_skill":"research-experiment-design"}
+{"intent":"Generate new mechanisms and falsifiable candidate ideas from the evidence","expected_skill":"research-hypothesis-generation","negative_for":["research-experiment-design"]}
+{"intent":"Independently score completed run artifacts against the locked contract","expected_skill":"research-experiment-evaluation","negative_for":["research-experiment-design"]}
+{"intent":"Design this experiment before seeing candidate results","expected_skill":"research-experiment-design","expectations":["Defines leakage checks","Locks primary metric and noise threshold","Does not execute the run"]}

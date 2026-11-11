@@ -1,0 +1,6 @@
+interface:
+  display_name: "Research Experiment Execution"
+  short_description: "Implement and run one approved ML candidate safely."
+  default_prompt: "Use $research-experiment-execution to implement this approved candidate, smoke it, and record every command."
+policy:
+  allow_implicit_invocation: false

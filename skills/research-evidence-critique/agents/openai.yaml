@@ -1,0 +1,6 @@
+interface:
+  display_name: "Research Evidence Critique"
+  short_description: "Challenge ML evidence, confounds, and causal claims."
+  default_prompt: "Use $research-evidence-critique to adversarially inspect this hypothesis and independent evaluation report."
+policy:
+  allow_implicit_invocation: false

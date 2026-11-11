@@ -1,0 +1,6 @@
+{"intent":"Synthesize accepted, negative, and inconclusive ML evidence into a claim-evidence report","expected_skill":"research-result-synthesis"}
+{"intent":"Write the final research report using only registered artifacts and verified citations","expected_skill":"research-result-synthesis"}
+{"intent":"Map every reported number to a run artifact and preserve unresolved limitations","expected_skill":"research-result-synthesis"}
+{"intent":"Independently evaluate a raw candidate run against the locked metrics","expected_skill":"research-experiment-evaluation","negative_for":["research-result-synthesis"]}
+{"intent":"Implement the next candidate and execute its smoke command","expected_skill":"research-experiment-execution","negative_for":["research-result-synthesis"]}
+{"intent":"Prepare the final report but stop before publication approval","expected_skill":"research-result-synthesis","expectations":["Builds claim-evidence table first","Verifies citations","Preserves negative and inconclusive findings"]}

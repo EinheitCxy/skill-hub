@@ -1,0 +1,6 @@
+interface:
+  display_name: "Research Hypothesis Generation"
+  short_description: "Turn evidence into diverse falsifiable ML candidates."
+  default_prompt: "Use $research-hypothesis-generation to propose bounded exploit, explore, and falsify candidates."
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Research Literature Review"
+  short_description: "Search and screen literature into cited evidence cards."
+  default_prompt: "Use $research-literature-review to search and screen sources for this bounded autoresearch task."
+policy:
+  allow_implicit_invocation: false

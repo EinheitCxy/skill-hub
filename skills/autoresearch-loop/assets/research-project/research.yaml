@@ -1,0 +1,263 @@
+schema_version: 1
+profile: ml-applied
+start_stage: intake
+limits:
+  loop-subagent-bound: 8
+  max_debug_depth: 3
+  max_skill_depth: 2
+  max_capability_skills: 2
+stages:
+  - id: intake
+    purpose: Normalize the idea or paper into a research request.
+    task_owner: coordinator
+    control_plane: true
+    primary_skill: autoresearch-loop
+    capability_skills: []
+    inputs: []
+    outputs: [research-request]
+    parallelizable: false
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: [paper-analysis, research-charter]
+  - id: paper-analysis
+    purpose: Map a supplied paper into claims, methods, limits, and reproduction work.
+    task_owner: subagent
+    primary_skill: research-paper-analysis
+    capability_skills: []
+    inputs: [research-request]
+    outputs: [paper-analysis-report]
+    parallelizable: true
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: [research-charter]
+  - id: research-charter
+    purpose: Define the falsifiable research question and success criteria.
+    task_owner: coordinator
+    control_plane: true
+    primary_skill: autoresearch-loop
+    capability_skills: []
+    inputs: [research-request]
+    outputs: [research-charter]
+    parallelizable: false
+    gate_after: true
+    gate_type: charter
+    gate_authority: coordinator
+    next: [literature-prior-art]
+  - id: literature-prior-art
+    purpose: Establish the relevant literature, prior art, and evidence base.
+    task_owner: subagent
+    primary_skill: research-literature-review
+    capability_skills: [literature-review]
+    inputs: [research-charter]
+    outputs: [evidence-cards, literature-report]
+    parallelizable: true
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: [dataset-leakage-audit]
+  - id: dataset-leakage-audit
+    purpose: Audit dataset integrity, splits, leakage risks, and evaluation validity.
+    task_owner: subagent
+    primary_skill: research-experiment-design
+    capability_skills: []
+    inputs: [research-charter, evidence-cards]
+    outputs: [dataset-audit]
+    parallelizable: false
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: [baseline-registration]
+  - id: baseline-registration
+    purpose: Register the approved baseline candidate before evaluation design.
+    task_owner: coordinator
+    primary_skill: autoresearch-loop
+    capability_skills: []
+    inputs: [dataset-audit, evidence-cards]
+    outputs: [baseline-candidate]
+    parallelizable: false
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: [baseline-evaluation-contract]
+  - id: baseline-evaluation-contract
+    purpose: Lock the baseline data, metrics, commands, and evidence requirements.
+    task_owner: subagent
+    primary_skill: research-experiment-design
+    capability_skills: []
+    inputs: [baseline-candidate, dataset-audit]
+    outputs: [evaluation-spec, baseline-run-plan]
+    parallelizable: false
+    gate_after: true
+    gate_type: evaluation
+    gate_authority: user
+    next: [environment-readiness]
+  - id: environment-readiness
+    purpose: Verify the declared execution environment and dependency lock.
+    task_owner: coordinator
+    primary_skill: autoresearch-loop
+    capability_skills: []
+    inputs: [evaluation-spec, baseline-run-plan]
+    outputs: [environment-receipt]
+    parallelizable: false
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: [baseline-reproduction]
+  - id: baseline-reproduction
+    purpose: Reproduce the approved baseline in a controlled environment.
+    task_owner: subagent
+    primary_skill: research-experiment-execution
+    capability_skills: []
+    inputs: [baseline-candidate, evaluation-spec, baseline-run-plan, environment-receipt]
+    outputs: [baseline-run, initial-baseline]
+    parallelizable: false
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: [hypothesis-pool]
+  - id: hypothesis-pool
+    purpose: Generate diverse, falsifiable candidate hypotheses.
+    task_owner: subagent
+    primary_skill: research-hypothesis-generation
+    capability_skills: []
+    inputs: [research-charter, evidence-cards, initial-baseline]
+    outputs: [candidate-proposals]
+    parallelizable: true
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: [evaluation-contract-lock]
+  - id: evaluation-contract-lock
+    purpose: Lock metrics, hard gates, comparability rules, and promotion criteria.
+    task_owner: subagent
+    primary_skill: research-experiment-design
+    capability_skills: []
+    inputs: [dataset-audit, initial-baseline, candidate-proposals]
+    outputs: [evaluation-spec, candidate-run-plans]
+    parallelizable: false
+    gate_after: true
+    gate_type: evaluation
+    gate_authority: user
+    next: [candidate-implementation]
+  - id: candidate-implementation
+    purpose: Implement and execute approved candidate changes in isolated workspaces.
+    task_owner: subagent
+    primary_skill: research-experiment-execution
+    capability_skills: []
+    inputs: [candidate-proposals, evaluation-spec, candidate-run-plans, environment-receipt]
+    outputs: [candidate-runs]
+    parallelizable: true
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: [candidate-evaluation]
+  - id: candidate-evaluation
+    purpose: Independently evaluate registered candidate runs against the locked contract.
+    task_owner: subagent
+    primary_skill: research-experiment-evaluation
+    capability_skills: []
+    inputs: [candidate-runs, evaluation-spec]
+    outputs: [evaluation-reports]
+    parallelizable: true
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: [evidence-critique]
+  - id: evidence-critique
+    purpose: Challenge evaluated mechanisms, confounds, leakage, and baseline fairness.
+    task_owner: subagent
+    primary_skill: research-evidence-critique
+    capability_skills: []
+    inputs: [evaluation-reports, candidate-proposals]
+    outputs: [critic-reports]
+    parallelizable: true
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: [search-selection]
+  - id: search-selection
+    purpose: Select, debug, promote provisionally, branch, or stop from registered evidence.
+    task_owner: coordinator
+    primary_skill: autoresearch-loop
+    capability_skills: []
+    inputs: [evaluation-reports, critic-reports]
+    outputs: [search-decision]
+    parallelizable: false
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: [candidate-implementation, error-slice-analysis, robustness-validation]
+  - id: error-slice-analysis
+    purpose: Diagnose candidate errors and performance across meaningful slices.
+    task_owner: subagent
+    primary_skill: research-experiment-evaluation
+    capability_skills: []
+    inputs: [evaluation-reports, evaluation-spec]
+    outputs: [slice-report]
+    parallelizable: true
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: [search-selection, robustness-validation]
+  - id: robustness-validation
+    purpose: Validate retained candidates across seeds, stress tests, and confounds.
+    task_owner: subagent
+    primary_skill: research-experiment-evaluation
+    capability_skills: []
+    inputs: [evaluation-reports, critic-reports]
+    outputs: [robustness-report, current-best]
+    parallelizable: true
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: [candidate-implementation, evidence-synthesis]
+  - id: evidence-synthesis
+    purpose: Synthesize claims from registered results and negative evidence.
+    task_owner: subagent
+    primary_skill: research-result-synthesis
+    capability_skills: []
+    inputs: [current-best, robustness-report, evaluation-reports, critic-reports]
+    outputs: [claim-evidence-report]
+    parallelizable: false
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: [citation-verification]
+  - id: citation-verification
+    purpose: Verify that every cited claim is supported by its source.
+    task_owner: subagent
+    primary_skill: research-result-synthesis
+    capability_skills: []
+    inputs: [claim-evidence-report, evidence-cards]
+    outputs: [citation-report]
+    parallelizable: false
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: [final-report]
+  - id: final-report
+    purpose: Produce the final evidence-linked research report.
+    task_owner: subagent
+    primary_skill: research-result-synthesis
+    capability_skills: []
+    inputs: [claim-evidence-report, citation-report]
+    outputs: [final-report]
+    parallelizable: false
+    gate_after: true
+    gate_type: publication
+    gate_authority: user
+    next: [archive-close]
+  - id: archive-close
+    purpose: Archive the completed research state and close the project.
+    task_owner: coordinator
+    primary_skill: autoresearch-loop
+    capability_skills: []
+    inputs: [final-report]
+    outputs: [archive-receipt]
+    parallelizable: false
+    gate_after: false
+    gate_type: null
+    gate_authority: null
+    next: []

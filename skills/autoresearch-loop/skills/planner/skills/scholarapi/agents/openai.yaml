@@ -1,0 +1,6 @@
+interface:
+  display_name: "Planner ScholarAPI"
+  short_description: "Bounded scholarly metadata discovery"
+  default_prompt: "Use $scholarapi through $planner for a bounded literature candidate search."
+policy:
+  allow_implicit_invocation: false

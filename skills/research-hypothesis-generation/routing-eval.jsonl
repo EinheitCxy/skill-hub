@@ -1,0 +1,6 @@
+{"intent":"Turn these evidence cards into diverse falsifiable ML candidate proposals","expected_skill":"research-hypothesis-generation"}
+{"intent":"Propose one exploit, one explore, and one falsify branch inside this approved boundary","expected_skill":"research-hypothesis-generation"}
+{"intent":"Rank candidate mechanisms by information value and explicit falsification conditions","expected_skill":"research-hypothesis-generation"}
+{"intent":"Lock metrics, seeds, hard gates, and robustness requirements for an experiment","expected_skill":"research-experiment-design","negative_for":["research-hypothesis-generation"]}
+{"intent":"Execute this selected candidate in the approved environment","expected_skill":"research-experiment-execution","negative_for":["research-hypothesis-generation"]}
+{"intent":"Generate bounded hypotheses but do not edit code or execute them","expected_skill":"research-hypothesis-generation","expectations":["Rejects cosmetic duplicates","Records expected observation","Records falsification condition"]}

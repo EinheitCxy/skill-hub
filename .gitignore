@@ -2,3 +2,12 @@
 .agents/
 .claude/
 .codex/
+.remember/
+dist/
+work/
+__pycache__/
+.pytest_cache/
+.research/
+.venv/
+*.pyc
+*.log

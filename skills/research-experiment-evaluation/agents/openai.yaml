@@ -1,0 +1,6 @@
+interface:
+  display_name: "Research Experiment Evaluation"
+  short_description: "Independently evaluate ML runs against a locked contract."
+  default_prompt: "Use $research-experiment-evaluation to evaluate these registered run artifacts against the locked EvaluationSpec."
+policy:
+  allow_implicit_invocation: false

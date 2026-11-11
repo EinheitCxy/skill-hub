@@ -1,0 +1,22 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "skill-hub",
+  "version": "0.3.0",
+  "description": "Reusable learning, ML audit, autonomous research loops, evidence review, experiment diagnosis, writing and development skills.",
+  "author": {
+    "name": "EinheitCxy",
+    "url": "https://github.com/EinheitCxy"
+  },
+  "repository": "https://github.com/EinheitCxy/skill-hub",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Skill Hub",
+        "shortDescription": "学习、审计、自动研究循环与开发工作流",
+        "longDescription": "包含 autoresearch-loop Coordinator、8 个内部 worker，以及按需学习、ML 审计、文献比较、结果诊断与开发工作流。所有 skill 与运行资源由 Skill Hub 统一分发。",
+        "developerName": "EinheitCxy",
+        "category": "Productivity"
+      }
+    }
+  }
+}

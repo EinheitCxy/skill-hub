@@ -1,12 +1,22 @@
 {
   "name": "skill-hub",
   "displayName": "Skill Hub",
-  "version": "0.2.1",
-  "description": "Focused learning, ML profiling, evidence review, experiment diagnosis, figures, research decisions, functional Git commits, and AI-tone cleanup for English and Chinese prose.",
+  "version": "0.3.0",
+  "description": "Learning, ML audit, autonomous research loops, evidence review, experiment diagnosis and development workflows.",
   "author": {
     "name": "EinheitCxy",
     "url": "https://github.com/EinheitCxy"
   },
   "repository": "https://github.com/EinheitCxy/skill-hub",
-  "skills": "./skills/"
+  "skills": "./skills/",
+  "agents": [
+    "./skills/autoresearch-loop/agents/research-evidence-critique.md",
+    "./skills/autoresearch-loop/agents/research-experiment-design.md",
+    "./skills/autoresearch-loop/agents/research-experiment-evaluation.md",
+    "./skills/autoresearch-loop/agents/research-experiment-execution.md",
+    "./skills/autoresearch-loop/agents/research-hypothesis-generation.md",
+    "./skills/autoresearch-loop/agents/research-literature-review.md",
+    "./skills/autoresearch-loop/agents/research-paper-analysis.md",
+    "./skills/autoresearch-loop/agents/research-result-synthesis.md"
+  ]
 }

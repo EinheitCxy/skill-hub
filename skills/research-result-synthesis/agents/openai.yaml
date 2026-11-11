@@ -1,0 +1,6 @@
+interface:
+  display_name: "Research Result Synthesis"
+  short_description: "Synthesize verified ML evidence without inventing results."
+  default_prompt: "Use $research-result-synthesis to produce a citation-verified claim-evidence report from these approved artifacts."
+policy:
+  allow_implicit_invocation: false

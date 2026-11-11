@@ -1,0 +1,6 @@
+interface:
+  display_name: "Autoresearch Loop"
+  short_description: "Coordinate gated ML research with durable evidence."
+  default_prompt: "Use $autoresearch-loop to start or resume a budget-gated ML research loop with auditable subagent reports."
+policy:
+  allow_implicit_invocation: true

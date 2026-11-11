@@ -1,0 +1,6 @@
+interface:
+  display_name: "Research Paper Analysis"
+  short_description: "Map a paper's method and evidence into reproducible work."
+  default_prompt: "Use $research-paper-analysis to extract this paper into a repository-mapped reproduction report."
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,6 @@
+{"intent":"Adversarially challenge this evaluated hypothesis for confounds and alternative explanations","expected_skill":"research-evidence-critique"}
+{"intent":"Check this ML result for leakage, unfair baselines, metric gaming, and seed sensitivity","expected_skill":"research-evidence-critique"}
+{"intent":"Propose the cheapest decisive falsification after the independent evaluation exists","expected_skill":"research-evidence-critique"}
+{"intent":"Compute the official metrics and uncertainty from raw run artifacts","expected_skill":"research-experiment-evaluation","negative_for":["research-evidence-critique"]}
+{"intent":"Search the literature and build initial evidence cards","expected_skill":"research-literature-review","negative_for":["research-evidence-critique"]}
+{"intent":"Try to disconfirm this claimed mechanism without mutating research state","expected_skill":"research-evidence-critique","expectations":["Separates fatal material and minor concerns","Checks weak baselines","Recommends decisive ablation"]}

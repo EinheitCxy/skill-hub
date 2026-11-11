@@ -1,0 +1,6 @@
+{"intent":"Implement this approved ML candidate inside the Modification Envelope and run its smoke check","expected_skill":"research-experiment-execution"}
+{"intent":"Prepare the approved uv environment, execute the official command, and save receipts","expected_skill":"research-experiment-execution"}
+{"intent":"Repair this candidate's bounded runtime failure within its debug budget","expected_skill":"research-experiment-execution"}
+{"intent":"Decide whether the completed candidate should become Current Best","expected_skill":"research-experiment-evaluation","negative_for":["research-experiment-execution"]}
+{"intent":"Brainstorm diverse new hypotheses without changing code","expected_skill":"research-hypothesis-generation","negative_for":["research-experiment-execution"]}
+{"intent":"Run this candidate only after checking both approved envelopes","expected_skill":"research-experiment-execution","expectations":["Runs smoke before official command","Records changed files and command receipts","Makes no scientific verdict"]}

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Research Experiment Design"
+  short_description: "Design comparable ML experiments and lock evaluation rules."
+  default_prompt: "Use $research-experiment-design to design a budgeted experiment and a lock-ready EvaluationSpec."
+policy:
+  allow_implicit_invocation: false

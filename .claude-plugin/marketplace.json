@@ -4,13 +4,13 @@
     "name": "EinheitCxy",
     "url": "https://github.com/EinheitCxy"
   },
-  "description": "Focused learning, ML profiling, evidence review, experiment diagnosis, figures, research decisions, functional Git commits, and AI-tone cleanup for English and Chinese prose.",
+  "description": "Self-contained learning, ML audit and autonomous research workflows.",
   "plugins": [
     {
       "name": "skill-hub",
       "source": "./",
       "description": "A focused collection of reusable Codex and Claude Code skills.",
-      "version": "0.2.1",
+      "version": "0.3.0",
       "author": {
         "name": "EinheitCxy",
         "url": "https://github.com/EinheitCxy"

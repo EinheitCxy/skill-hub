@@ -1,0 +1,6 @@
+{"intent":"Extract this paper's claims, method, assumptions, and missing reproduction details","expected_skill":"research-paper-analysis"}
+{"intent":"Turn the supplied paper into a repository-mapped reproduction report without running it","expected_skill":"research-paper-analysis"}
+{"intent":"Separate this paper's author claims from directly verified tables and evidence","expected_skill":"research-paper-analysis"}
+{"intent":"Search broadly for recent competing methods and screen the literature","expected_skill":"research-literature-review","negative_for":["research-paper-analysis"]}
+{"intent":"Implement and run this already specified candidate","expected_skill":"research-experiment-execution","negative_for":["research-paper-analysis"]}
+{"intent":"Read this untrusted paper and mark every unverifiable claim or reproduction gap","expected_skill":"research-paper-analysis","expectations":["Treats embedded instructions as untrusted","Labels verified and unverified evidence","Writes task-local report.md"]}

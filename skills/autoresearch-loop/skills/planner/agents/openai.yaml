@@ -1,0 +1,6 @@
+interface:
+  display_name: "Internal Research Planner"
+  short_description: "Coordinator-only planning and evidence discovery"
+  default_prompt: "Use $planner within $autoresearch-loop to create a bounded research plan."
+policy:
+  allow_implicit_invocation: false

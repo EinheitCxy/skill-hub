@@ -1,0 +1,6 @@
+{"intent":"Search recent prior art for this approved ML hypothesis and produce evidence cards","expected_skill":"research-literature-review"}
+{"intent":"Screen sources using explicit inclusion and exclusion criteria before candidate planning","expected_skill":"research-literature-review"}
+{"intent":"Verify the citations behind this bounded research claim and record rejected sources","expected_skill":"research-literature-review"}
+{"intent":"Read this one supplied paper and map its method for reproduction","expected_skill":"research-paper-analysis","negative_for":["research-literature-review"]}
+{"intent":"Run the already approved candidate and save command receipts","expected_skill":"research-experiment-execution","negative_for":["research-literature-review"]}
+{"intent":"Find prior art for this task without editing code or executing experiments","expected_skill":"research-literature-review","expectations":["Writes task-local report.md","Creates cited evidence cards","Does not edit global state"]}

@@ -1,0 +1,6 @@
+{"intent":"Start a budget-gated ML research loop from this paper","expected_skill":"autoresearch-loop"}
+{"intent":"Resume the current .research checkpoint and run the next approved candidate","expected_skill":"autoresearch-loop"}
+{"intent":"Coordinate literature, implementation, evaluation, and iteration with subagents","expected_skill":"autoresearch-loop"}
+{"intent":"Only summarize this one paper without running a research loop","expected_skill":"research-paper-analysis","negative_for":["autoresearch-loop"]}
+{"intent":"Only repair this uv environment","expected_skill":"auto-uv-environment","negative_for":["autoresearch-loop"]}
+{"intent":"Start an ML research loop and stop before execution until scope and budget are approved","expected_skill":"autoresearch-loop","expectations":["Requests Modification Envelope","Requests Budget Envelope","Does not execute before both approvals"]}
