@@ -28,7 +28,9 @@ Read [figure-contract.md](references/figure-contract.md) when defining panels, s
 
 ## Select Tools Only When Needed
 
-Use an existing visualization skill or library only when it fits the requested output: `scientific-figure-making` or `scientific-visualization` for publication figures, `matplotlib` for precise static control, and `plotly` for requested interactive inspection. Read the selected skill before use. Do not load all of them or create a plotting tutorial.
+Check which optional visualization skills and libraries are actually available before choosing one. Use one only when it fits the requested output: `scientific-figure-making` or `scientific-visualization` for publication figures, `matplotlib` for precise static control, and `plotly` for requested interactive inspection. Read the selected skill before use. If an optional skill is absent, use an appropriate available plotting library directly (for example Matplotlib for static figures or Plotly for requested interaction); do not fabricate a skill invocation or treat a missing optional skill as a blocker. If no suitable tool can run, provide the plotting specification and identify the rendering limit rather than claiming a completed figure. Do not load all skills or create a plotting tutorial.
+
+Apply the same checks on every path: verify data provenance, statistical units and aggregation, axes and legends, caption consistency, exported files, and actual rendered output. A successful export alone is not visual verification. Respect authorization for installing dependencies or running new experiments.
 
 ## Evidence Boundary
 

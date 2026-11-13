@@ -1,6 +1,6 @@
 ---
 name: paper-review
-description: "Use when an already-provided academic paper needs a Chinese critical explanation of its problem, method, evidence, and limitations. Use the complete-report and HTML-rendering workflow only when the user explicitly requests a formal document deliverable."
+description: "Use when an academic paper supplied as text, a file, a title, or a link needs a Chinese critical explanation of its problem, method, evidence, and limitations. Use the complete-report and HTML-rendering workflow only when the user explicitly requests a formal document deliverable."
 ---
 
 # Paper Review
@@ -9,7 +9,13 @@ description: "Use when an already-provided academic paper needs a Chinese critic
 
 Explain the supplied paper in Chinese for technical readers through its problem, method, evidence, and limitations. Connect the bottleneck, mechanism, experimental conditions, and limits of the conclusions; avoid paragraph-by-paragraph summaries.
 
-Do not search for, download, or complete missing paper materials. State when the source does not specify a mechanism, value, implementation detail, or causal link.
+## Establish the source
+
+- When given a title, link, or incomplete material, use available retrieval tools to obtain the original paper from an authoritative source. Verify title, authors, and version before analysis; ask only if ambiguity remains material after checking available sources.
+- Respect an explicit request to use only supplied materials. Retrieval is not permission to bypass access controls or acquire paid content.
+- If the full text cannot be obtained, state exactly what was read (for example abstract, selected pages, or supplement). Limit conclusions to that material; never present an abstract-only explanation as a full-paper review.
+- Distinguish the paper itself, user-provided annotations, and external supplementary sources. Attach source/version anchors to claims; do not attribute repository behavior or another paper's claims to this paper without evidence.
+- State when the source does not specify a mechanism, value, implementation detail, or causal link. Do not fill these gaps from experience or memory.
 
 ## Default response
 

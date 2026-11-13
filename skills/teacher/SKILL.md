@@ -28,13 +28,17 @@ Turn a clear learning goal into short, verifiable loops: choose the next step, p
 | Quiz or mastery assessment | Read `references/assessment.md`; ask one question at a time |
 | Explain a concept or check understanding | Explain briefly; use the Feynman Loop in `references/assessment.md` when a restatement or diagnosed gap calls for it |
 | Revision | Read `references/cheat-sheet.md`; give a one-page sheet and self-test questions without answers |
-| Model, module, forward pass, shapes, or call chain | Read `references/source-model-walkthrough.md`; explain directly from source |
+| Implementation-specific repository, function, model/module, forward pass, tensor shapes, or call chain | Read `references/source-model-walkthrough.md`; explain directly from source |
 
 Load a reference only when its mode is requested. Complexity alone does not justify expanding into every module.
 
 ## Source walkthrough
 
-This mode stands alone: no prerequisite quiz, course, or learning plan. Follow the evidence and output rules in `references/source-model-walkthrough.md`. An ordinary source explanation can trigger it.
+Use this mode for implementation-specific questions about a concrete repository, function, model/module, forward pass, tensor shapes, or call chain; an ordinary source explanation is sufficient and need not use the words “from source”. Read `references/source-model-walkthrough.md` and inspect the relevant source. This mode stands alone: no prerequisite quiz, course, or learning plan.
+
+For a general conceptual question such as “what is attention?”, explain directly without requiring a repository or source walkthrough. Do not turn every mention of a model or tensor into a code audit.
+
+If source-based analysis is requested but the relevant source is unavailable, state the access/evidence limit and distinguish any conceptual explanation from verified implementation facts. Never invent code paths, shapes, or runtime behavior.
 
 ## Evidence of mastery
 
